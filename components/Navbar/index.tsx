@@ -1,32 +1,26 @@
-import Link from 'next/link';
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Link from "next/link";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import MenuIcon from "@mui/icons-material/Menu";
 
 const Navbar = () => {
-
-    return(
-        <div>
-            <ul>
-                <li><Link href="/"><a>Home</a></Link></li>
-                <li><Link href="/about"><a>About</a></Link></li>
-            </ul>
-            {/*@ts-ignore*/}
-            <style jsx>{`
-                ul {
-                    background: #333;
-                    color: #fff;
-                    list-style: none;
-                    display: flex;
-                }
-                ul li {
-                    font-size: 22px;
-                    margin-right: 50px;
-                }
-                ul li a {
-                    color: #fff;
-                    text-decoration: none;
-                }
-            `}</style>
-        </div>
-    );
-}
+  return (
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            <Link href="/">Mastervey</Link>
+          </Typography>
+          <Button color="inherit">Signup</Button>
+          <Button color="inherit">Login</Button>
+        </Toolbar>
+      </AppBar>
+    </Box>
+  );
+};
 
 export default Navbar;
