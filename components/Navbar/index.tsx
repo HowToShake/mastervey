@@ -15,8 +15,12 @@ const Navbar = () => {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             <Link href="/">Mastervey</Link>
           </Typography>
-          <Button color="inherit">Signup</Button>
-          <Button color="inherit">Login</Button>
+          <Button color="inherit" sx={{ mr: 3 }}>
+            <Link href="/signup">Signup</Link>
+          </Button>
+          <Button color="inherit">
+            <Link href="/login">Login</Link>
+          </Button>
         </Toolbar>
       </AppBar>
     </Box>
