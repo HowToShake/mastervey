@@ -5,9 +5,11 @@ import CssBaseline from "@mui/material/CssBaseline";
 import axios from "axios";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { AuthProvider } from "../context/AuthContext";
+import { AuthGuard } from "../HOC/AuthGuard";
 
 export type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode;
+  requireAuth?: boolean;
 };
 
 type AppPropsWithLayout = AppProps & {
@@ -22,11 +24,16 @@ const queryClient = new QueryClient();
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
 
-  return getLayout(
+  return (
     <QueryClientProvider client={queryClient}>
       <CssBaseline />
       <AuthProvider>
-        <Component {...pageProps} />
+        {/* if requireAuth property is present - protect the page */}
+        {Component.requireAuth ? (
+          <AuthGuard>{getLayout(<Component {...pageProps} />)}</AuthGuard>
+        ) : (
+          getLayout(<Component {...pageProps} />)
+        )}
       </AuthProvider>
     </QueryClientProvider>
   );

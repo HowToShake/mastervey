@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import { ReactElement, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import Box from "@mui/material/Box";
 import { Container, TextField } from "@mui/material";
@@ -10,7 +10,7 @@ import Typography from "@mui/material/Typography";
 
 const Login = () => {
   const { push } = useRouter();
-  const { login } = useAuth();
+  const { user, login } = useAuth();
   const {
     register,
     handleSubmit,
@@ -18,12 +18,16 @@ const Login = () => {
     setError,
   } = useForm();
 
+  useEffect(() => {
+    if (user) push("/dashboard");
+  }, [user]);
+
   const onSubmit = async (data) => {
     try {
       const loginRes = await login(data.email, data.password);
 
       if (loginRes) {
-        await push("/dashboard");
+        return push("/dashboard");
       }
     } catch (e) {
       console.log("e === ", e);
