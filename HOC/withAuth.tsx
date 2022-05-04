@@ -1,14 +1,14 @@
 import { useRouter } from "next/router";
+import { useAuth } from "../hooks/useAuth";
 const withAuth = (WrappedComponent) => {
   return (props) => {
     // checks whether we are on client / browser or server.
     if (typeof window !== "undefined") {
       const { replace } = useRouter();
-
-      const accessToken = localStorage.getItem("accessToken");
+      const { user } = useAuth();
 
       // If there is no access token we redirect to "/" page.
-      if (!accessToken) {
+      if (!user) {
         return replace("/");
       }
 

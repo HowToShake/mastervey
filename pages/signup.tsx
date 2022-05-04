@@ -8,6 +8,7 @@ import { useMutation } from "react-query";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useAuth } from "../hooks/useAuth";
+import Typography from "@mui/material/Typography";
 
 const Signup = () => {
   const router = useRouter();
@@ -37,40 +38,46 @@ const Signup = () => {
   };
 
   return (
-    <Container
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-      }}
-      maxWidth="md"
-    >
-      <form
-        id="signup"
-        onSubmit={handleSubmit(onSubmit)}
-        style={{ display: "flex", flexDirection: "column", height: 280 }}
+    <>
+      <Container
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+        }}
+        maxWidth="md"
       >
-        <TextField
-          label="Email"
-          fullWidth
-          {...register("email")}
-          variant="outlined"
-          sx={{ mt: 2 }}
-        />
-        <TextField
-          label="Password"
-          type="password"
-          fullWidth
-          {...register("password", { required: true })}
-          variant="outlined"
-          sx={{ mt: 2 }}
-        />
-        {errors.lastName && <p>Password is required.</p>}
-      </form>
-      <Button type="submit" form="signup" sx={{ textAlign: "center" }}>
-        Submit
-      </Button>
-    </Container>
+        <Typography variant="h2" textAlign="center" mb={2}>
+          Signup
+        </Typography>
+
+        <form
+          id="signup"
+          onSubmit={handleSubmit(onSubmit)}
+          style={{ display: "flex", flexDirection: "column", height: 280 }}
+        >
+          <TextField
+            label="Email"
+            fullWidth
+            {...register("email")}
+            variant="outlined"
+            sx={{ mt: 2 }}
+          />
+          <TextField
+            label="Password"
+            type="password"
+            fullWidth
+            {...register("password", { required: true })}
+            variant="outlined"
+            sx={{ mt: 2 }}
+          />
+          {errors.lastName && <p>Password is required.</p>}
+        </form>
+        <Button type="submit" form="signup" sx={{ textAlign: "center" }}>
+          Submit
+        </Button>
+      </Container>
+    </>
   );
 };
 

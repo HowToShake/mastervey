@@ -1,8 +1,12 @@
 import Box from "@mui/material/Box";
 import { ReactElement } from "react";
 import Navbar from "../components/Navbar";
+import withAuth from "../HOC/withAuth";
+import { useAuth } from "../hooks/useAuth";
 
 const Dashboard = () => {
+  const { user } = useAuth();
+  console.log("user", user);
   return <Box>Hello World</Box>;
 };
 
@@ -23,4 +27,4 @@ Dashboard.getLayout = function getLayout(page: ReactElement) {
   );
 };
 
-export default Dashboard;
+export default withAuth(Dashboard);
