@@ -1,27 +1,36 @@
 import { ReactElement } from "react";
 import Navbar from "../components/Navbar";
 import { useForm } from "react-hook-form";
-import Input from "@mui/material/Input";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import { Container, TextField } from "@mui/material";
 import { useMutation } from "react-query";
 import axios from "axios";
+import { useRouter } from "next/router";
+import { useAuth } from "../hooks/useAuth";
 
 const Signup = () => {
+  const router = useRouter();
+  const { login } = useAuth();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  const mutation = useMutation((signup) => {
-    return axios.get("helloWorld", signup);
+  const { mutateAsync } = useMutation((signup) => {
+    return axios.post("signup", signup);
   });
 
   const onSubmit = async (data) => {
     try {
-      await mutation.mutateAsync(data);
+      await mutateAsync(data);
+
+      const loginRes = await login(data.email, data.password);
+
+      if (loginRes) {
+        await router.push("/dashboard");
+      }
     } catch (e) {
       console.log("e === ", e);
     }

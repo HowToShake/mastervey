@@ -4,6 +4,7 @@ import type { AppProps } from "next/app";
 import CssBaseline from "@mui/material/CssBaseline";
 import axios from "axios";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { AuthProvider } from "../context/AuthContext";
 
 export type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -24,7 +25,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   return getLayout(
     <QueryClientProvider client={queryClient}>
       <CssBaseline />
-      <Component {...pageProps} />
+      <AuthProvider>
+        <Component {...pageProps} />
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
