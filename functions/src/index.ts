@@ -17,32 +17,30 @@ export const signup = functions.https.onRequest((request, response) => {
       password,
     });
 
-    // await admin.firestore().
-
-    // await admin.
-
     response.send(uid);
   });
 });
 
 export const createSurvey = functions.https.onRequest((req, res) => {
   cors(req, res, async () => {
-    const tokenId = req.get("Authorization")?.split("Bearer ")[1];
+    try {
+      const tokenId = req.get("Authorization")?.split("Bearer ")[1];
+      const { name } = req.body;
 
-    if (!tokenId || typeof tokenId === "undefined") {
-      res.status(403).send("Unauthorized");
+      if (!tokenId || typeof tokenId === "undefined") {
+        res.status(403).send("Unauthorized");
+      }
+
+      const { uid } = await admin.auth().verifyIdToken(tokenId as string);
+
+      const newSurvey = { userId: uid, create: {}, answers: {}, name };
+
+      await admin.firestore().collection("surveys").doc().create(newSurvey);
+
+      return res.status(200).send(newSurvey);
+    } catch (e) {
+      return res.status(500).send("There was an error during creating survey");
     }
-
-    const { uid } = await admin.auth().verifyIdToken(tokenId as string);
-
-    // .then((decoded) => res.status(200).send(decoded))
-    // .catch((err) => res.status(401).send(err));
-
-    return await admin
-      .firestore()
-      .collection("surveys")
-      .doc()
-      .create({ userId: uid, create: {}, answers: {} });
   });
 });
 
@@ -66,8 +64,8 @@ export const getSurveys = functions.https.onRequest((req, res) => {
       return res.status(200).send([]);
     }
 
-    return snapshot.forEach((doc) => {
-      return doc.data();
-    });
+    const data = snapshot.docs.map((doc) => doc.data());
+
+    return res.status(200).send(data);
   });
 });
