@@ -11,7 +11,7 @@ import { auth } from "../utils/firebase";
 import nookies from "nookies";
 
 export type ContextState = {
-  user: User | null;
+  user: (User & { accessToken: string }) | null;
   signup?: (email: string, password: string) => Promise<UserCredential>;
   login?: (email: string, password: string) => Promise<UserCredential>;
   logout?: () => Promise<void>;
@@ -47,17 +47,20 @@ export const AuthProvider = ({ children }) => {
     sendPasswordResetEmail(auth, email);
 
   useEffect(() => {
-    return onAuthStateChanged(auth, async (user: User | null) => {
-      if (!user) {
-        setUser(null);
-        nookies.set(undefined, "token", "", { path: "/" });
-      } else {
-        const token = await user.getIdToken(true);
-        setUser(user);
-        nookies.set(undefined, "token", token, { path: "/" });
+    return onAuthStateChanged(
+      auth,
+      async (user: (User & { accessToken: string }) | null) => {
+        if (!user) {
+          setUser(null);
+          nookies.set(undefined, "token", "", { path: "/" });
+        } else {
+          const token = await user.getIdToken(true);
+          setUser(user);
+          nookies.set(undefined, "token", token, { path: "/" });
+        }
+        setLoading(false);
       }
-      setLoading(false);
-    });
+    );
   }, []);
 
   useEffect(() => {

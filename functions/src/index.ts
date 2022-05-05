@@ -17,18 +17,57 @@ export const signup = functions.https.onRequest((request, response) => {
       password,
     });
 
+    // await admin.firestore().
+
+    // await admin.
+
     response.send(uid);
   });
 });
 
-export const newUserSignup = functions.auth.user().onCreate((user, ctx) => {
-  functions.logger.info("user", user, "ctx", ctx, { structuredData: true });
-  return admin.firestore().collection("users").doc(user.uid).set({
-    email: user.email,
+export const createSurvey = functions.https.onRequest((req, res) => {
+  cors(req, res, async () => {
+    const tokenId = req.get("Authorization")?.split("Bearer ")[1];
+
+    if (!tokenId || typeof tokenId === "undefined") {
+      res.status(403).send("Unauthorized");
+    }
+
+    const { uid } = await admin.auth().verifyIdToken(tokenId as string);
+
+    // .then((decoded) => res.status(200).send(decoded))
+    // .catch((err) => res.status(401).send(err));
+
+    return await admin
+      .firestore()
+      .collection("surveys")
+      .doc()
+      .create({ userId: uid, create: {}, answers: {} });
   });
 });
 
-export const deleteUser = functions.auth.user().onDelete((user) => {
-  const doc = admin.firestore().collection("users").doc(user.uid);
-  return doc.delete;
+export const getSurveys = functions.https.onRequest((req, res) => {
+  cors(req, res, async () => {
+    const tokenId = req.get("Authorization")?.split("Bearer ")[1];
+
+    if (!tokenId || typeof tokenId === "undefined") {
+      res.status(403).send("Unauthorized");
+    }
+
+    const { uid } = await admin.auth().verifyIdToken(tokenId as string);
+
+    const surveysRef = admin.firestore().collection("surveys");
+    const snapshot = await surveysRef.where("userId", "==", uid).get();
+
+    functions.logger.log(snapshot);
+
+    if (snapshot.empty) {
+      console.log("No matching documents.");
+      return res.status(200).send([]);
+    }
+
+    return snapshot.forEach((doc) => {
+      return doc.data();
+    });
+  });
 });

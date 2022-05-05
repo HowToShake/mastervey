@@ -5,40 +5,52 @@ import Navbar from "../components/Navbar";
 import { WidthProvider, Responsive } from "react-grid-layout";
 import _ from "lodash";
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
-
 import { useAuth } from "../hooks/useAuth";
+import { useQuery } from "react-query";
+import axios from "axios";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import { Button } from "@mui/material";
+
+function generateLayout(i, key, list) {
+  return {
+    i: i.toString(),
+    x: i * 2,
+    y: 0,
+    w: 2,
+    h: 2,
+    add: i === list.length - 1,
+  };
+}
 
 const Dashboard = () => {
   const { user } = useAuth();
   console.log("user", user);
 
-  const [state, setState] = useState({
-    items: [0, 1, 2, 3, 4].map(function (i, key, list) {
-      return {
-        i: i.toString(),
-        x: i * 2,
-        y: 0,
-        w: 2,
-        h: 2,
-        add: i === list.length - 1,
-      };
-    }),
-    newCounter: 0,
-  });
+  const { data: { data: surveys } = { data: [] }, status } = useQuery(
+    "surveys",
+    () =>
+      axios.get(`getSurveys`, {
+        headers: { Authorization: `Bearer ${user?.accessToken}` },
+      })
+  );
+
+  const [layout, setLayout] = useState();
+  const [breakpoint, setBreakpoint] = useState();
+  const [items, setItems] = useState(surveys?.map(generateLayout));
+
+  console.log("items", items, "surveys", surveys);
 
   const onAddItem = () => {
-    setState({
-      ...state,
-      items: state.items.concat({
-        i: "n" + state.newCounter,
-        x: (state.items.length * 2) % (state.cols || 12),
-        y: Infinity,
-        w: 2,
-        h: 2,
-      }),
-
-      newCounter: state.newCounter + 1,
+    const newItems = items?.concat({
+      i: "n" + new Date().getTime(),
+      x: (items?.length * 2) % (layout?.cols || 12),
+      y: Infinity,
+      w: 2,
+      h: 2,
     });
+
+    setItems(newItems);
   };
 
   const createElement = (el) => {
@@ -50,7 +62,11 @@ const Dashboard = () => {
     };
     const i = el.add ? "+" : el.i;
     return (
-      <div key={i} data-grid={el} style={{ backgroundColor: "red" }}>
+      <div
+        key={i}
+        data-grid={el}
+        style={{ backgroundColor: "transparent", border: "1px solid black" }}
+      >
         {el.add ? (
           <span
             className="add text"
@@ -62,37 +78,53 @@ const Dashboard = () => {
         ) : (
           <span className="text">{i}</span>
         )}
-        <span className="remove" style={removeStyle}>
+        <span
+          className="remove"
+          style={removeStyle}
+          onClick={() => onRemoveItem(i)}
+        >
           x
         </span>
       </div>
     );
   };
 
-  const onBreakpointChange = (breakpoint, cols) => {
-    setState({
-      ...state,
-      breakpoint: breakpoint,
-      cols: cols,
-    });
-  };
+  const onRemoveItem = (i) => {
+    console.log("removing", i);
+    const newItems = _.reject(items, { i: i });
 
-  const onLayoutChange = (layout) => {
-    setState({ ...state, layout: layout });
+    setItems(newItems);
   };
-
-  console.log("state", state);
 
   return (
-    <ResponsiveReactGridLayout
-      onLayoutChange={onLayoutChange}
-      onBreakpointChange={onBreakpointChange}
-      className="layout"
-      cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
-      rowHeight={100}
-    >
-      {_.map(state.items, (el) => createElement(el))}
-    </ResponsiveReactGridLayout>
+    <>
+      <Box>
+        <Button
+          onClick={onAddItem}
+          sx={{ justifySelf: "end", textAlign: "center" }}
+        >
+          Add
+        </Button>
+        <Typography
+          textAlign="center"
+          variant="h2"
+          sx={{ justifySelf: "center" }}
+        >
+          Your surveys
+        </Typography>
+      </Box>
+      <ResponsiveReactGridLayout
+        onLayoutChange={(layout) => setLayout(layout)}
+        onBreakpointChange={(breakpoint, cols) =>
+          setBreakpoint({ breakpoint: breakpoint, cols: cols })
+        }
+        className="layout"
+        cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+        rowHeight={100}
+      >
+        {_.map(items, (el) => createElement(el))}
+      </ResponsiveReactGridLayout>
+    </>
   );
 };
 
