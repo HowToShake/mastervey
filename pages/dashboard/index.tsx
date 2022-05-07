@@ -122,7 +122,6 @@ const Dashboard = () => {
   };
 
   const onRemoveItem = (i) => {
-    console.log("removing", i);
     const newItems = _.reject(items, { i: i });
 
     setItems(newItems);

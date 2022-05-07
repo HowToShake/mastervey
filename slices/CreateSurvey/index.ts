@@ -62,7 +62,6 @@ export const createSurveySlice = createSlice({
       const newQuestion = {
         ...oldQuestion,
         [action.payload.key]: action.payload.value,
-        typeOptions: undefined,
       };
 
       state.createSurvey = currentState.map((obj) =>
