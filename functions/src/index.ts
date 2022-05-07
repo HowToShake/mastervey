@@ -33,7 +33,7 @@ export const createSurvey = functions.https.onRequest((req, res) => {
 
       const { uid } = await admin.auth().verifyIdToken(tokenId as string);
 
-      const newSurvey = { userId: uid, create: {}, answers: {}, name };
+      const newSurvey = { userId: uid, create: [], answers: [], name };
 
       await admin.firestore().collection("surveys").doc().create(newSurvey);
 

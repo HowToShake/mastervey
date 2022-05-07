@@ -1,11 +1,11 @@
 import "/node_modules/react-grid-layout/css/styles.css";
 import "/node_modules/react-resizable/css/styles.css";
 import { ReactElement, useEffect, useState } from "react";
-import Navbar from "../components/Navbar";
+import Navbar from "../../components/Navbar";
 import { WidthProvider, Responsive } from "react-grid-layout";
 import _ from "lodash";
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 import { useMutation, useQuery } from "react-query";
 import axios from "axios";
 import Typography from "@mui/material/Typography";
@@ -17,6 +17,7 @@ import {
   colors,
   animals,
 } from "unique-names-generator";
+import { useRouter } from "next/router";
 
 function generateLayout(i, key, list, cols) {
   return {
@@ -31,6 +32,7 @@ function generateLayout(i, key, list, cols) {
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const router = useRouter();
 
   const query = useQuery("surveys", () =>
     axios.get(`getSurveys`, {
@@ -40,7 +42,11 @@ const Dashboard = () => {
 
   const [layout, setLayout] = useState();
   const [breakpoint, setBreakpoint] = useState();
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState(
+    query?.data?.data?.map((i, key, list) =>
+      generateLayout(i, key, list, breakpoint?.cols)
+    ) || []
+  );
 
   const mutation = useMutation((data) =>
     axios.post("createSurvey", data, {
@@ -54,7 +60,7 @@ const Dashboard = () => {
     );
 
     setItems(newItems);
-  }, [mutation.data?.data, query?.data?.data]);
+  }, [query?.data?.data]);
 
   const onAddItem = async () => {
     try {
@@ -62,7 +68,14 @@ const Dashboard = () => {
         dictionaries: [adjectives, colors, animals],
       });
 
-      await mutation.mutateAsync({ name });
+      const res = await mutation.mutateAsync({ name });
+
+      if (res?.status === 200) {
+        const newItem = [res?.data]?.map((i, key, list) =>
+          generateLayout(i, key, list, breakpoint?.cols)
+        );
+        setItems([...items, ...newItem]);
+      }
     } catch (e) {
       console.log("e === ", e);
     }
@@ -84,9 +97,19 @@ const Dashboard = () => {
           backgroundColor: "transparent",
           border: "1px solid black",
           textAlign: "center",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
-        <Typography variant="h6">{el?.i}</Typography>
+        <Button
+          sx={{ p: 1 }}
+          onClick={() => {
+            router.push(`/dashboard/${el?.i}`);
+          }}
+        >
+          <Typography variant="h6">{el?.i}</Typography>
+        </Button>
         <span
           className="remove"
           style={removeStyle}

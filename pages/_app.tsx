@@ -6,6 +6,8 @@ import axios from "axios";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { AuthProvider } from "../context/AuthContext";
 import { AuthGuard } from "../HOC/AuthGuard";
+import { store } from "../store";
+import { Provider } from "react-redux";
 
 export type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -25,17 +27,19 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <CssBaseline />
-      <AuthProvider>
-        {/* if requireAuth property is present - protect the page */}
-        {Component.requireAuth ? (
-          <AuthGuard>{getLayout(<Component {...pageProps} />)}</AuthGuard>
-        ) : (
-          getLayout(<Component {...pageProps} />)
-        )}
-      </AuthProvider>
-    </QueryClientProvider>
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
+        <CssBaseline />
+        <AuthProvider>
+          {/* if requireAuth property is present - protect the page */}
+          {Component.requireAuth ? (
+            <AuthGuard>{getLayout(<Component {...pageProps} />)}</AuthGuard>
+          ) : (
+            getLayout(<Component {...pageProps} />)
+          )}
+        </AuthProvider>
+      </QueryClientProvider>
+    </Provider>
   );
 }
 
