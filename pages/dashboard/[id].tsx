@@ -6,6 +6,7 @@ import { Tab } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import Tabs from "@mui/material/Tabs";
 import GenerateSurvey from "../../modules/GenerateSurvey";
+import PreviewSurvey from "../../modules/PreviewSurvey";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -70,7 +71,7 @@ const DetailedSurvey = () => {
         Answers
       </TabPanel>
       <TabPanel value={value} index={2}>
-        Preview
+        <PreviewSurvey />
       </TabPanel>
       <TabPanel value={value} index={3}>
         Share
