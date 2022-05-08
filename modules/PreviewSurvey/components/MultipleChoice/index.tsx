@@ -5,20 +5,39 @@ import Typography from "@mui/material/Typography";
 import FormControl from "@mui/material/FormControl";
 import { Checkbox, FormControlLabel, FormGroup } from "@mui/material";
 import * as React from "react";
+import { useAppDispatch, useAppSelector } from "../../../../hooks/redux";
+import { updateAnswer } from "../../../../slices/CreateSurvey";
 
-const MultipleChoice = ({ question, typeOptions }) => {
-  const [state, setState] = React.useState([]);
+const MultipleChoice = ({ question }) => {
+  const answers = useAppSelector((state) =>
+    state.createSurvey.answers.answers.find(
+      (que) => que.questionId === question?.id
+    )
+  );
+
+  const dispatch = useAppDispatch();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const response = event.target.name;
 
-    if (state?.includes(response)) {
-      const newState = state?.filter((value) => value !== response);
+    if (answers?.answers?.includes(response)) {
+      const newState = answers?.answers?.filter((value) => value !== response);
 
-      return setState(newState);
+      return dispatch(
+        updateAnswer({
+          //@ts-ignore
+          id: question.id,
+          answers: newState,
+        })
+      );
     }
-
-    return setState([...state, response]);
+    return dispatch(
+      updateAnswer({
+        //@ts-ignore
+        id: question.id,
+        answers: [...(answers?.answers || []), response],
+      })
+    );
   };
 
   return (
@@ -32,16 +51,17 @@ const MultipleChoice = ({ question, typeOptions }) => {
             mb: 2,
           }}
         >
-          <Typography variant="h4">{question}</Typography>
+          <Typography variant="h4">{question?.question}</Typography>
         </Box>
         <FormControl sx={{ m: 3 }} component="fieldset" variant="standard">
           <FormGroup>
-            {typeOptions?.map((option) => {
+            {question?.typeOptions?.map((option, index) => {
               return (
                 <FormControlLabel
+                  key={index}
                   control={
                     <Checkbox
-                      checked={state?.includes(option.label)}
+                      checked={answers?.answers?.includes(option.label)}
                       onChange={handleChange}
                       name={option.label}
                     />

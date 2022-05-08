@@ -32,11 +32,19 @@ interface SurveyFromDB {
 export interface CreateSurveyState {
   createSurvey: NewQuestionProps[];
   surveys: SurveyFromDB[];
+  answers: {
+    questionId: string;
+    answers: { questionId: string; answers: unknown[] }[];
+  };
 }
 
 const initialState: CreateSurveyState = {
   createSurvey: [],
   surveys: [],
+  answers: {
+    questionId: "",
+    answers: [],
+  },
 };
 
 export const createSurveySlice = createSlice({
@@ -172,8 +180,6 @@ export const createSurveySlice = createSlice({
         (survey) => survey?.name === action.payload?.name
       );
 
-      console.log("currentSurvey", currentSurvey?.name);
-
       if (!currentSurvey || currentSurvey?.create?.length === 0) {
         state.createSurvey = [];
         return;
@@ -181,6 +187,46 @@ export const createSurveySlice = createSlice({
 
       // @ts-ignore
       state.createSurvey = [...currentSurvey?.create];
+    },
+    setAnswersForQuestion: (
+      state,
+      action: PayloadAction<{ questionId: string }>
+    ) => {
+      state.answers.questionId = action.payload.questionId;
+    },
+    updateAnswer: (
+      state,
+      action: PayloadAction<{
+        id: string;
+        answers: unknown[];
+      }>
+    ) => {
+      const currentAnswers = current(state.answers.answers);
+
+      const existingAnswer = currentAnswers?.find((answer) => {
+        if (answer?.questionId === action.payload.id) {
+          return answer;
+        }
+      });
+
+      if (existingAnswer) {
+        const uniqData = uniqBy(
+          [
+            { questionId: action.payload.id, answers: action.payload.answers },
+            ...currentAnswers,
+          ],
+          "questionId"
+        );
+
+        state.answers.answers = uniqData;
+        return;
+      }
+
+      state.answers.answers = [
+        ...currentAnswers,
+        { questionId: action.payload.id, answers: action.payload.answers },
+      ];
+      return;
     },
   },
 });
@@ -194,6 +240,8 @@ export const {
   deleteTypeOption,
   saveSurvey,
   moveIncomingSurveyToCreateSurvey,
+  setAnswersForQuestion,
+  updateAnswer,
 } = createSurveySlice.actions;
 
 export default createSurveySlice.reducer;

@@ -4,19 +4,21 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import {
-  DesktopDatePicker,
-  LocalizationProvider,
-  TimePicker,
-} from "@mui/x-date-pickers";
+import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { TextField } from "@mui/material";
+import { useAppDispatch, useAppSelector } from "../../../../hooks/redux";
+import { updateAnswer } from "../../../../slices/CreateSurvey";
 
-const Date = ({ question }) => {
-  const [value, setValue] = React.useState<Date | null>(null);
+const DatePicker = ({ question }) => {
+  const answers = useAppSelector((state) =>
+    state.createSurvey.answers.answers.find(
+      (que) => que.questionId === question?.id
+    )
+  );
 
-  const handleChange = (newValue: Date | null) => {
-    setValue(newValue);
-  };
+  const dispatch = useAppDispatch();
+
+  const value = answers?.answers?.[0] ? answers.answers[0] : null;
 
   return (
     <Card sx={{ boxShadow: 3 }}>
@@ -29,13 +31,21 @@ const Date = ({ question }) => {
             mb: 2,
           }}
         >
-          <Typography variant="h4">{question}</Typography>
+          <Typography variant="h4">{question.question}</Typography>
         </Box>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <DesktopDatePicker
             inputFormat="dd.mm.yyyy"
             value={value}
-            onChange={handleChange}
+            onChange={(e) => {
+              dispatch(
+                updateAnswer({
+                  //@ts-ignore
+                  id: question.id,
+                  answers: [new Date(e)],
+                })
+              );
+            }}
             renderInput={(params) => <TextField {...params} />}
           />
         </LocalizationProvider>
@@ -44,4 +54,4 @@ const Date = ({ question }) => {
   );
 };
 
-export default Date;
+export default DatePicker;

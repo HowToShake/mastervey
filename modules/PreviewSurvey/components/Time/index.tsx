@@ -4,11 +4,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import {
-  DesktopDatePicker,
-  LocalizationProvider,
-  TimePicker,
-} from "@mui/x-date-pickers";
+import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
 import { TextField } from "@mui/material";
 import plLocale from "date-fns/locale/pl";
 

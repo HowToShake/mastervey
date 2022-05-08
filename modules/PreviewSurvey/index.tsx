@@ -1,13 +1,6 @@
 import Box from "@mui/material/Box";
-import { useAppSelector } from "../../hooks/redux";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import { useRouter } from "next/router";
-import PanoramaFishEyeIcon from "@mui/icons-material/PanoramaFishEye";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import ShortTextIcon from "@mui/icons-material/ShortText";
-import FormatAlignJustifyIcon from "@mui/icons-material/FormatAlignJustify";
-import LinearScaleIcon from "@mui/icons-material/LinearScale";
-import EventIcon from "@mui/icons-material/Event";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import Typography from "@mui/material/Typography";
 import { Container } from "@mui/material";
 import * as React from "react";
@@ -16,18 +9,10 @@ import MultipleChoice from "./components/MultipleChoice";
 import ShortText from "./components/ShortText";
 import LongText from "./components/LongText";
 import Scale from "./components/Scale";
-import Date from "./components/Date";
+import DatePicker from "./components/Date";
 import Time from "./components/Time";
-
-const availableTypes = [
-  { type: "singleChoice", icon: PanoramaFishEyeIcon },
-  { type: "multipleChoice", icon: CheckBoxIcon },
-  { type: "shortText", icon: ShortTextIcon },
-  { type: "longText", icon: FormatAlignJustifyIcon },
-  { type: "scale", icon: LinearScaleIcon },
-  { type: "date", icon: EventIcon },
-  { type: "time", icon: AccessTimeIcon },
-];
+import { useEffect } from "react";
+import { setAnswersForQuestion } from "../../slices/CreateSurvey";
 
 const PreviewSurvey = () => {
   const router = useRouter();
@@ -35,10 +20,20 @@ const PreviewSurvey = () => {
   const survey = useAppSelector((state) =>
     state.createSurvey.surveys?.find((survey) => survey?.name === id)
   );
+  const dispatch = useAppDispatch();
 
   if (!survey?.create) {
     return null;
   }
+
+  useEffect(() => {
+    dispatch(
+      setAnswersForQuestion({
+        // @ts-ignore
+        questionId: id,
+      })
+    );
+  }, [id]);
 
   return (
     <Container maxWidth="lg">
@@ -60,10 +55,7 @@ const PreviewSurvey = () => {
           case "multipleChoice": {
             return (
               <Box mt={2} mb={2}>
-                <MultipleChoice
-                  question={question.question}
-                  typeOptions={question.typeOptions}
-                />
+                <MultipleChoice question={question} />
               </Box>
             );
           }
@@ -80,10 +72,7 @@ const PreviewSurvey = () => {
           case "longText": {
             return (
               <Box mt={2} mb={2}>
-                <LongText
-                  question={question.question}
-                  required={question.required}
-                />
+                <LongText question={question} />
               </Box>
             );
           }
@@ -100,7 +89,7 @@ const PreviewSurvey = () => {
           case "date": {
             return (
               <Box mt={2} mb={2}>
-                <Date question={question.question} />
+                <DatePicker question={question} />
               </Box>
             );
           }

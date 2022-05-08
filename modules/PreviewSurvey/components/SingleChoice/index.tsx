@@ -7,8 +7,10 @@ import RadioGroup from "@mui/material/RadioGroup";
 import { FormControlLabel } from "@mui/material";
 import Radio from "@mui/material/Radio";
 import * as React from "react";
+import { useAppDispatch } from "../../../../hooks/redux";
 
 const SingleChoice = ({ question, typeOptions }) => {
+  const dispatch = useAppDispatch();
   return (
     <Card sx={{ boxShadow: 3 }}>
       <CardContent>
