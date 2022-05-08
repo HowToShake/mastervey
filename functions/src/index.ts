@@ -86,8 +86,6 @@ export const saveSurvey = functions.https.onRequest((req, res) => {
       return res.status(403).send("Unauthorized");
     }
 
-    functions.logger.log("create", create);
-
     const surveysRef = admin.firestore().collection("surveys");
     const snapshot = await surveysRef.where("name", "==", name).get();
 
@@ -96,10 +94,14 @@ export const saveSurvey = functions.https.onRequest((req, res) => {
       return res.status(200).send([]);
     }
 
-    const data = snapshot.docs.map((doc) => {
-      doc.get("create").update(create);
-    });
+    const surveyRef = snapshot.docs[0].ref;
 
-    return res.status(200).send(data);
+    const update = admin
+      .firestore()
+      .collection("surveys")
+      .doc(surveyRef.id)
+      .update("create", create);
+
+    return res.status(200).send(update);
   });
 });

@@ -1,10 +1,10 @@
 import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
 import { nanoid } from "nanoid";
+import { uniqBy } from "lodash";
 
 interface TypeOptionsProps {
   id: string;
   label: string;
-  value?: unknown;
 }
 
 interface NewQuestionProps {
@@ -18,16 +18,25 @@ interface NewQuestionProps {
     | "scale"
     | "date"
     | "time";
-  typeOptions?: TypeOptionsProps[];
+  typeOptions: TypeOptionsProps[] | null;
   isRequired: boolean;
+}
+
+interface SurveyFromDB {
+  name: string;
+  create: Record<string, unknown>[];
+  answers: Record<string, unknown>[];
+  userId: string;
 }
 
 export interface CreateSurveyState {
   createSurvey: NewQuestionProps[];
+  surveys: SurveyFromDB[];
 }
 
 const initialState: CreateSurveyState = {
   createSurvey: [],
+  surveys: [],
 };
 
 export const createSurveySlice = createSlice({
@@ -152,6 +161,27 @@ export const createSurveySlice = createSlice({
         obj.id === questionId ? newQuestion : obj
       );
     },
+    saveSurvey: (state, action: PayloadAction<{ data: SurveyFromDB[] }>) => {
+      state.surveys = action.payload.data;
+    },
+    moveIncomingSurveyToCreateSurvey: (
+      state,
+      action: PayloadAction<{ name: string }>
+    ) => {
+      const currentSurvey = current(state.surveys).find(
+        (survey) => survey?.name === action.payload?.name
+      );
+
+      console.log("currentSurvey", currentSurvey?.name);
+
+      if (!currentSurvey || currentSurvey?.create?.length === 0) {
+        state.createSurvey = [];
+        return;
+      }
+
+      // @ts-ignore
+      state.createSurvey = [...currentSurvey?.create];
+    },
   },
 });
 
@@ -162,6 +192,8 @@ export const {
   addTypeOption,
   updateTypeOption,
   deleteTypeOption,
+  saveSurvey,
+  moveIncomingSurveyToCreateSurvey,
 } = createSurveySlice.actions;
 
 export default createSurveySlice.reducer;

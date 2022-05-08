@@ -6,10 +6,13 @@ import { Box, FormControlLabel, Switch, TextField } from "@mui/material";
 import TypeField from "../TypeField";
 
 import TypeOptions from "../TypeOptions";
-import { useAppDispatch } from "../../../../hooks/redux";
+import { useAppDispatch, useAppSelector } from "../../../../hooks/redux";
 import { changeQuestionState } from "../../../../slices/CreateSurvey";
 
 const CreateQuestionCard = ({ id: questionId }) => {
+  const { question } = useAppSelector((state) =>
+    state.createSurvey.createSurvey?.find((survey) => survey.id === questionId)
+  );
   const dispatch = useAppDispatch();
   return (
     <Card sx={{ boxShadow: 3 }}>
@@ -24,6 +27,7 @@ const CreateQuestionCard = ({ id: questionId }) => {
           <TextField
             label="Question"
             sx={{ width: "45%" }}
+            value={question}
             onChange={(e) => {
               dispatch(
                 changeQuestionState({

@@ -57,19 +57,23 @@ const DetailedSurvey = () => {
           onChange={handleChange}
           aria-label="basic tabs example"
         >
-          <Tab label="Generate survey" />
-          <Tab label="Preview survey" />
-          <Tab label="Share survey" />
+          <Tab label="Generate" />
+          <Tab label="Answers" />
+          <Tab label="Preview" />
+          <Tab label="Share" />
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>
         <GenerateSurvey />
       </TabPanel>
       <TabPanel value={value} index={1}>
-        Item Two
+        Answers
       </TabPanel>
       <TabPanel value={value} index={2}>
-        Item Three
+        Preview
+      </TabPanel>
+      <TabPanel value={value} index={3}>
+        Share
       </TabPanel>
     </Box>
   );
@@ -83,5 +87,7 @@ DetailedSurvey.getLayout = function getLayout(page: ReactElement) {
     </>
   );
 };
+
+DetailedSurvey.requireAuth = true;
 
 export default DetailedSurvey;

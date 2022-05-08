@@ -18,6 +18,8 @@ import {
   animals,
 } from "unique-names-generator";
 import { useRouter } from "next/router";
+import { useAppDispatch } from "../../hooks/redux";
+import { saveSurvey } from "../../slices/CreateSurvey";
 
 function generateLayout(i, key, list, cols) {
   return {
@@ -33,6 +35,8 @@ function generateLayout(i, key, list, cols) {
 const Dashboard = () => {
   const { user } = useAuth();
   const router = useRouter();
+
+  const dispatch = useAppDispatch();
 
   const query = useQuery("surveys", () =>
     axios.get(`getSurveys`, {
@@ -55,6 +59,12 @@ const Dashboard = () => {
   );
 
   useEffect(() => {
+    dispatch(
+      saveSurvey({
+        //@ts-ignore
+        data: query?.data?.data,
+      })
+    );
     const newItems = query?.data?.data?.map((i, key, list) =>
       generateLayout(i, key, list, breakpoint?.cols)
     );
