@@ -7,13 +7,17 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
 import { TextField } from "@mui/material";
 import plLocale from "date-fns/locale/pl";
+import { useAppDispatch, useAppSelector } from "../../../../hooks/redux";
+import { updateAnswer } from "../../../../slices/CreateSurvey";
 
 const Time = ({ question }) => {
-  const [value, setValue] = React.useState<Date | null>(null);
+  const answers = useAppSelector((state) =>
+    state.createSurvey.answers.answers.find(
+      (que) => que.questionId === question?.id
+    )
+  );
 
-  const handleChange = (newValue: Date | null) => {
-    setValue(newValue);
-  };
+  const dispatch = useAppDispatch();
 
   return (
     <Card sx={{ boxShadow: 3 }}>
@@ -26,13 +30,22 @@ const Time = ({ question }) => {
             mb: 2,
           }}
         >
-          <Typography variant="h4">{question}</Typography>
+          <Typography variant="h4">{question?.question}</Typography>
         </Box>
         <LocalizationProvider dateAdapter={AdapterDateFns} locale={plLocale}>
           <TimePicker
             inputFormat="HH:mm"
-            value={value}
-            onChange={handleChange}
+            value={answers?.answers?.[0] || null}
+            onChange={(e) => {
+              console.log("e", e);
+              dispatch(
+                updateAnswer({
+                  //@ts-ignore
+                  id: question.id,
+                  answers: [e],
+                })
+              );
+            }}
             renderInput={(params) => <TextField {...params} />}
           />
         </LocalizationProvider>

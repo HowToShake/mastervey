@@ -45,10 +45,7 @@ const PreviewSurvey = () => {
           case "singleChoice": {
             return (
               <Box mt={2} mb={2}>
-                <SingleChoice
-                  question={question.question}
-                  typeOptions={question.typeOptions}
-                />
+                <SingleChoice question={question} />
               </Box>
             );
           }
@@ -62,10 +59,7 @@ const PreviewSurvey = () => {
           case "shortText": {
             return (
               <Box mt={2} mb={2}>
-                <ShortText
-                  question={question.question}
-                  required={question.required}
-                />
+                <ShortText question={question} />
               </Box>
             );
           }
@@ -79,10 +73,7 @@ const PreviewSurvey = () => {
           case "scale": {
             return (
               <Box mt={2} mb={2}>
-                <Scale
-                  question={question.question}
-                  typeOptions={question.typeOptions}
-                />
+                <Scale question={question} />
               </Box>
             );
           }
@@ -96,7 +87,7 @@ const PreviewSurvey = () => {
           case "time": {
             return (
               <Box mt={2} mb={2}>
-                <Time question={question.question} />
+                <Time question={question} />
               </Box>
             );
           }

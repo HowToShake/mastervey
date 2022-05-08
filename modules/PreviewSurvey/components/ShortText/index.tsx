@@ -4,8 +4,18 @@ import Typography from "@mui/material/Typography";
 import { TextField } from "@mui/material";
 import Card from "@mui/material/Card";
 import * as React from "react";
+import { useAppDispatch, useAppSelector } from "../../../../hooks/redux";
+import { updateAnswer } from "../../../../slices/CreateSurvey";
 
-const ShortText = ({ question, required }) => {
+const ShortText = ({ question }) => {
+  const answers = useAppSelector((state) =>
+    state.createSurvey.answers.answers.find(
+      (que) => que.questionId === question?.id
+    )
+  );
+
+  const dispatch = useAppDispatch();
+
   return (
     <Card sx={{ boxShadow: 3 }}>
       <CardContent>
@@ -17,11 +27,21 @@ const ShortText = ({ question, required }) => {
             mb: 2,
           }}
         >
-          <Typography variant="h4">{question}</Typography>
+          <Typography variant="h4">{question?.question}</Typography>
         </Box>
         <TextField
           sx={{ width: 600 }}
-          required={required}
+          required={question?.required}
+          value={answers?.answers?.[0] || ""}
+          onChange={(e) => {
+            dispatch(
+              updateAnswer({
+                //@ts-ignore
+                id: question.id,
+                answers: [e.target.value],
+              })
+            );
+          }}
           placeholder="Answer"
           inputProps={{ maxLength: 50 }}
         />

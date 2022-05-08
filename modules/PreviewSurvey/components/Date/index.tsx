@@ -42,6 +42,7 @@ const DatePicker = ({ question }) => {
                 updateAnswer({
                   //@ts-ignore
                   id: question.id,
+                  // @ts-ignore
                   answers: [new Date(e)],
                 })
               );

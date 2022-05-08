@@ -7,10 +7,18 @@ import RadioGroup from "@mui/material/RadioGroup";
 import { FormControlLabel } from "@mui/material";
 import Radio from "@mui/material/Radio";
 import * as React from "react";
-import { useAppDispatch } from "../../../../hooks/redux";
+import { useAppDispatch, useAppSelector } from "../../../../hooks/redux";
+import { updateAnswer } from "../../../../slices/CreateSurvey";
 
-const SingleChoice = ({ question, typeOptions }) => {
+const SingleChoice = ({ question }) => {
+  const answers = useAppSelector((state) =>
+    state.createSurvey.answers.answers.find(
+      (que) => que.questionId === question?.id
+    )
+  );
+
   const dispatch = useAppDispatch();
+
   return (
     <Card sx={{ boxShadow: 3 }}>
       <CardContent>
@@ -22,7 +30,7 @@ const SingleChoice = ({ question, typeOptions }) => {
             mb: 2,
           }}
         >
-          <Typography variant="h4">{question}</Typography>
+          <Typography variant="h4">{question?.question}</Typography>
         </Box>
         <FormControl>
           <RadioGroup
@@ -30,12 +38,21 @@ const SingleChoice = ({ question, typeOptions }) => {
             defaultValue="female"
             name="radio-buttons-group"
           >
-            {typeOptions?.map((option) => {
+            {question?.typeOptions?.map((option) => {
               return (
                 <FormControlLabel
-                  value={option.label}
-                  control={<Radio />}
+                  value={answers?.answers?.[0]}
+                  control={<Radio value={option.label} />}
                   label={option.label}
+                  onChange={(e) => {
+                    dispatch(
+                      updateAnswer({
+                        //@ts-ignore
+                        id: question.id,
+                        answers: [option.label],
+                      })
+                    );
+                  }}
                 />
               );
             })}
