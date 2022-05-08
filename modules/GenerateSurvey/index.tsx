@@ -70,15 +70,7 @@ const GenerateSurvey = () => {
           mt={2}
         >
           <Button
-            sx={{ width: "30%" }}
-            color="error"
-            variant="outlined"
-            startIcon={<CancelIcon />}
-          >
-            Cancel
-          </Button>
-          <Button
-            sx={{ width: "30%" }}
+            sx={{ width: "100%" }}
             color="success"
             variant="outlined"
             startIcon={<SaveIcon />}

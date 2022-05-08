@@ -105,3 +105,31 @@ export const saveSurvey = functions.https.onRequest((req, res) => {
     return res.status(200).send(update);
   });
 });
+
+export const saveAnswer = functions.https.onRequest((req, res) => {
+  cors(req, res, async () => {
+    const { answer, question } = req.body;
+
+    const surveysRef = admin.firestore().collection("surveys");
+    const snapshot = await surveysRef.where("name", "==", question).get();
+
+    if (snapshot.empty) {
+      console.log("No matching documents.");
+      return res.status(200).send([]);
+    }
+
+    const surveyRef = snapshot.docs[0].ref;
+
+    const data = snapshot.docs.map((doc) => doc.data());
+
+    const newAnswersArray = [...data?.[0]?.answers, ...answer];
+
+    const update = admin
+      .firestore()
+      .collection("surveys")
+      .doc(surveyRef.id)
+      .update("answers", newAnswersArray);
+
+    return res.status(200).send(update);
+  });
+});

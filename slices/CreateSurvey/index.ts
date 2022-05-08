@@ -193,6 +193,7 @@ export const createSurveySlice = createSlice({
       action: PayloadAction<{ questionId: string }>
     ) => {
       state.answers.questionId = action.payload.questionId;
+      state.answers.answers = [];
     },
     updateAnswer: (
       state,
