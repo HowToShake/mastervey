@@ -8,6 +8,7 @@ import Tabs from "@mui/material/Tabs";
 import GenerateSurvey from "../../modules/GenerateSurvey";
 import PreviewSurvey from "../../modules/PreviewSurvey";
 import Answers from "../../modules/Answers";
+import Share from "../../modules/Share";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -75,7 +76,7 @@ const DetailedSurvey = () => {
         <PreviewSurvey />
       </TabPanel>
       <TabPanel value={value} index={3}>
-        Share
+        <Share />
       </TabPanel>
     </Box>
   );

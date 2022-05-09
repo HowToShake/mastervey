@@ -198,3 +198,21 @@ export const deleteSurvey = functions.https.onRequest((req, res) => {
     return res.status(200).send(deletedSurvey);
   });
 });
+
+export const getSurvey = functions.https.onRequest((req, res) => {
+  cors(req, res, async () => {
+    const { name } = req.query;
+
+    const surveysRef = admin.firestore().collection("surveys");
+    const snapshot = await surveysRef.where("name", "==", name).get();
+
+    if (snapshot.empty) {
+      console.log("No matching documents.");
+      return res.status(200).send([]);
+    }
+
+    const data = snapshot.docs.map((doc) => doc.data());
+
+    return res.status(200).send(data[0]);
+  });
+});
