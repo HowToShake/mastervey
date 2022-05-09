@@ -45,10 +45,11 @@ const CreateQuestionCard = ({ id: questionId }) => {
         </Box>
       </CardContent>
       <CardActions>
-        <FormControlLabel
-          control={<Switch defaultChecked={false} />}
-          label="Required"
-        />
+        {/*TODO: Add later*/}
+        {/*<FormControlLabel*/}
+        {/*  control={<Switch defaultChecked={false} />}*/}
+        {/*  label="Required"*/}
+        {/*/>*/}
       </CardActions>
     </Card>
   );

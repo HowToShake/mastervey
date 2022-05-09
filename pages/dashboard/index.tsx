@@ -32,6 +32,19 @@ function generateLayout(i, key, list, cols) {
   };
 }
 
+const removeSurvey = async (question, accessToken) => {
+  try {
+    await axios.delete("/deleteSurvey", {
+      params: {
+        name: question,
+      },
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+  } catch (e) {
+    console.log("e === ", e);
+  }
+};
+
 const Dashboard = () => {
   const { user } = useAuth();
   const router = useRouter();
@@ -48,6 +61,7 @@ const Dashboard = () => {
   const [breakpoint, setBreakpoint] = useState();
   const [items, setItems] = useState(
     query?.data?.data?.map((i, key, list) =>
+      // @ts-ignore
       generateLayout(i, key, list, breakpoint?.cols)
     ) || []
   );
@@ -66,6 +80,7 @@ const Dashboard = () => {
       })
     );
     const newItems = query?.data?.data?.map((i, key, list) =>
+      // @ts-ignore
       generateLayout(i, key, list, breakpoint?.cols)
     );
 
@@ -77,11 +92,12 @@ const Dashboard = () => {
       const name = uniqueNamesGenerator({
         dictionaries: [adjectives, colors, animals],
       });
-
+      // @ts-ignore
       const res = await mutation.mutateAsync({ name });
 
       if (res?.status === 200) {
         const newItem = [res?.data]?.map((i, key, list) =>
+          // @ts-ignore
           generateLayout(i, key, list, breakpoint?.cols)
         );
         setItems([...items, ...newItem]);
@@ -122,6 +138,7 @@ const Dashboard = () => {
         </Button>
         <span
           className="remove"
+          // @ts-ignore
           style={removeStyle}
           onClick={() => onRemoveItem(el?.i)}
         >
@@ -131,10 +148,15 @@ const Dashboard = () => {
     );
   };
 
-  const onRemoveItem = (i) => {
-    const newItems = _.reject(items, { i: i });
-
-    setItems(newItems);
+  const onRemoveItem = async (i) => {
+    try {
+      console.log("i", i);
+      await removeSurvey(i, user?.accessToken);
+      const newItems = _.reject(items, { i: i });
+      setItems(newItems);
+    } catch (e) {
+      console.log("e === ", e);
+    }
   };
 
   return (
@@ -157,7 +179,8 @@ const Dashboard = () => {
       <ResponsiveReactGridLayout
         onLayoutChange={(layout) => setLayout(layout)}
         onBreakpointChange={(breakpoint, cols) =>
-          setBreakpoint({ breakpoint: breakpoint, cols: cols })
+          // @ts-ignore
+          setBreakpoint({ breakpoint, cols })
         }
         className="layout"
         cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
