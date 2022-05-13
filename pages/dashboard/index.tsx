@@ -51,16 +51,17 @@ const Dashboard = () => {
 
   const dispatch = useAppDispatch();
 
-  const query = useQuery("surveys", () =>
-    axios.get(`getSurveys`, {
+  const { data: surveys = [] } = useQuery("surveys", async () => {
+    const { data } = await axios.get(`getSurveys`, {
       headers: { Authorization: `Bearer ${user?.accessToken}` },
-    })
-  );
+    });
+    return data;
+  });
 
   const [layout, setLayout] = useState();
   const [breakpoint, setBreakpoint] = useState();
   const [items, setItems] = useState(
-    query?.data?.data?.map((i, key, list) =>
+    surveys?.map((i, key, list) =>
       // @ts-ignore
       generateLayout(i, key, list, breakpoint?.cols)
     ) || []
@@ -76,16 +77,16 @@ const Dashboard = () => {
     dispatch(
       saveSurvey({
         //@ts-ignore
-        data: query?.data?.data,
+        data: surveys,
       })
     );
-    const newItems = query?.data?.data?.map((i, key, list) =>
+    const newItems = surveys?.map((i, key, list) =>
       // @ts-ignore
       generateLayout(i, key, list, breakpoint?.cols)
     );
 
     setItems(newItems);
-  }, [query?.data?.data]);
+  }, [surveys]);
 
   const onAddItem = async () => {
     try {

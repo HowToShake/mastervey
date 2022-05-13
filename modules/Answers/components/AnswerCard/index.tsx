@@ -21,7 +21,7 @@ const AnswerCard = ({ answerId, answerValue }) => {
             mb: 2,
           }}
         >
-          <Typography variant="h4">{question.question}</Typography>
+          <Typography variant="h4">{question?.question}</Typography>
         </Box>
         <Typography>{JSON.stringify(answerValue)}</Typography>
       </CardContent>

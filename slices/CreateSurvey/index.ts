@@ -188,6 +188,13 @@ export const createSurveySlice = createSlice({
       // @ts-ignore
       state.createSurvey = [...currentSurvey?.create];
     },
+    uploadSurveyToCreateSurvey: (
+      state,
+      action: PayloadAction<{ survey: SurveyFromDB }>
+    ) => {
+      // @ts-ignore
+      state.createSurvey = action.payload.survey.create;
+    },
     setAnswersForQuestion: (
       state,
       action: PayloadAction<{ questionId: string }>
@@ -243,6 +250,7 @@ export const {
   moveIncomingSurveyToCreateSurvey,
   setAnswersForQuestion,
   updateAnswer,
+  uploadSurveyToCreateSurvey,
 } = createSurveySlice.actions;
 
 export default createSurveySlice.reducer;

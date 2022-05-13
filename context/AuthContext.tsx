@@ -78,6 +78,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const value: ContextState = {
+    // @ts-ignore
     user,
     login,
     signup,

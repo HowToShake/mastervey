@@ -5,15 +5,15 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { useAppDispatch, useAppSelector } from "../../hooks/redux";
 import {
   createNewQuestion,
-  moveIncomingSurveyToCreateSurvey,
+  uploadSurveyToCreateSurvey,
 } from "../../slices/CreateSurvey";
 import Box from "@mui/material/Box";
 import SaveIcon from "@mui/icons-material/Save";
-import CancelIcon from "@mui/icons-material/Cancel";
 import axios from "axios";
 import { useAuth } from "../../hooks/useAuth";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import { useQuery } from "react-query";
 
 const GenerateSurvey = () => {
   const { user } = useAuth();
@@ -21,6 +21,30 @@ const GenerateSurvey = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { id } = router.query;
+
+  const { data: survey } = useQuery(
+    "survey",
+    async () => {
+      const { data } = await axios.get(`getSurvey`, {
+        params: { name: id },
+      });
+      return data;
+    },
+    { enabled: !!id }
+  );
+
+  console.log("survey", survey);
+
+  useEffect(() => {
+    if (survey?.create) {
+      dispatch(
+        uploadSurveyToCreateSurvey({
+          // @ts-ignore
+          survey,
+        })
+      );
+    }
+  }, [survey]);
 
   const saveSurvey = async () => {
     try {
@@ -35,15 +59,6 @@ const GenerateSurvey = () => {
       console.log("e === ", e);
     }
   };
-
-  useEffect(() => {
-    dispatch(
-      moveIncomingSurveyToCreateSurvey({
-        // @ts-ignore
-        name: id,
-      })
-    );
-  }, [id]);
 
   return (
     <Container maxWidth="lg" sx={{ display: "flex", flexDirection: "column" }}>

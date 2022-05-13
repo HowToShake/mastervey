@@ -12,17 +12,42 @@ import Scale from "./components/Scale";
 import DatePicker from "./components/Date";
 import Time from "./components/Time";
 import { useEffect } from "react";
-import { setAnswersForQuestion } from "../../slices/CreateSurvey";
+import {
+  setAnswersForQuestion,
+  uploadSurveyToCreateSurvey,
+} from "../../slices/CreateSurvey";
 import Button from "@mui/material/Button";
 import SaveIcon from "@mui/icons-material/Save";
 import axios from "axios";
+import { useQuery } from "react-query";
 
 const PreviewSurvey = () => {
   const router = useRouter();
   const { id } = router.query;
-  const survey = useAppSelector((state) =>
-    state.createSurvey.surveys?.find((survey) => survey?.name === id)
+
+  const { data: survey } = useQuery(
+    "survey",
+    async () => {
+      const { data } = await axios.get(`getSurvey`, {
+        params: { name: id },
+      });
+      return data;
+    },
+    { enabled: !!id }
   );
+
+  console.log("preview", survey);
+
+  useEffect(() => {
+    if (survey?.create) {
+      dispatch(
+        uploadSurveyToCreateSurvey({
+          // @ts-ignore
+          survey,
+        })
+      );
+    }
+  }, [survey]);
 
   const { questionId, answers } = useAppSelector(
     (state) => state.createSurvey.answers
