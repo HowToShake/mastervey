@@ -6,14 +6,13 @@ import LinearScaleIcon from "@mui/icons-material/LinearScale";
 import EventIcon from "@mui/icons-material/Event";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import * as React from "react";
-import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
+import Select from "@mui/material/Select";
 import Button from "@mui/material/Button";
-import { useAppDispatch, useAppSelector } from "../../../../hooks/redux";
-import { changeQuestionState } from "../../../../slices/CreateSurvey";
+import { useAppDispatch, useAppSelector } from "@hooks/redux";
+import { changeQuestionState } from "@slices/createSurvey";
 
 const availableTypes = [
   { type: "singleChoice", icon: PanoramaFishEyeIcon },

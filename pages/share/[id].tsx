@@ -1,9 +1,8 @@
-import PreviewSurvey from "../../modules/PreviewSurvey";
 import { useRouter } from "next/router";
-import { useAppDispatch, useAppSelector } from "../../hooks/redux";
+import { useAppDispatch, useAppSelector } from "@hooks/redux";
 import axios from "axios";
 import { useEffect } from "react";
-import { setAnswersForQuestion } from "../../slices/CreateSurvey";
+import { setAnswersForQuestion } from "@slices/createSurvey";
 import { Container } from "@mui/material";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";

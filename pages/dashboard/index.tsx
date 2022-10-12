@@ -5,12 +5,19 @@ import Navbar from "../../components/Navbar";
 import { WidthProvider, Responsive } from "react-grid-layout";
 import _ from "lodash";
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
-import { useAuth } from "../../hooks/useAuth";
-import { useMutation, useQuery } from "react-query";
+import { useAuth } from "@hooks/useAuth";
+
 import axios from "axios";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import { Button } from "@mui/material";
+import {
+  Button,
+  Container,
+  IconButton,
+  Paper,
+  Stack,
+  Tooltip,
+} from "@mui/material";
 import {
   uniqueNamesGenerator,
   adjectives,
@@ -18,20 +25,23 @@ import {
   animals,
 } from "unique-names-generator";
 import { useRouter } from "next/router";
-import { useAppDispatch } from "../../hooks/redux";
-import { saveSurvey } from "../../slices/CreateSurvey";
+import { useAppDispatch } from "@hooks/redux";
+import { saveSurvey } from "@slices/createSurvey";
+import {
+  useCreateSurveyMutation,
+  useGetSurveysQuery,
+} from "../../services/surveys";
+import AddIcon from "@mui/icons-material/Add";
+import Grid from "@mui/material/Grid";
+import { experimentalStyled as styled } from "@mui/material/styles";
 
-function generateLayout(i, key, list, cols) {
-  return {
-    i: i?.name,
-    x: (key * 2) % (cols || 12),
-    y: Infinity,
-    w: 2,
-    h: 2,
-    add: i === list.length - 1,
-  };
-}
-
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+  ...theme.typography.body2,
+  padding: theme.spacing(2),
+  textAlign: "center",
+  color: theme.palette.text.secondary,
+}));
 const removeSurvey = async (question, accessToken) => {
   try {
     await axios.delete("/deleteSurvey", {
@@ -51,145 +61,73 @@ const Dashboard = () => {
 
   const dispatch = useAppDispatch();
 
-  const { data: surveys = [] } = useQuery("surveys", async () => {
-    const { data } = await axios.get(`getSurveys`, {
-      headers: { Authorization: `Bearer ${user?.accessToken}` },
-    });
-    return data;
-  });
+  const { data: surveys = [] } = useGetSurveysQuery();
 
-  const [layout, setLayout] = useState();
-  const [breakpoint, setBreakpoint] = useState();
-  const [items, setItems] = useState(
-    surveys?.map((i, key, list) =>
-      // @ts-ignore
-      generateLayout(i, key, list, breakpoint?.cols)
-    ) || []
-  );
-
-  const mutation = useMutation((data) =>
-    axios.post("createSurvey", data, {
-      headers: { Authorization: `Bearer ${user?.accessToken}` },
-    })
-  );
-
-  useEffect(() => {
-    dispatch(
-      saveSurvey({
-        //@ts-ignore
-        data: surveys,
-      })
-    );
-    const newItems = surveys?.map((i, key, list) =>
-      // @ts-ignore
-      generateLayout(i, key, list, breakpoint?.cols)
-    );
-
-    setItems(newItems);
-  }, [surveys]);
+  const [addPost, result] = useCreateSurveyMutation();
 
   const onAddItem = async () => {
     try {
       const name = uniqueNamesGenerator({
         dictionaries: [adjectives, colors, animals],
       });
-      // @ts-ignore
-      const res = await mutation.mutateAsync({ name });
 
-      if (res?.status === 200) {
-        const newItem = [res?.data]?.map((i, key, list) =>
-          // @ts-ignore
-          generateLayout(i, key, list, breakpoint?.cols)
-        );
-        setItems([...items, ...newItem]);
-      }
-    } catch (e) {
-      console.log("e === ", e);
-    }
-  };
-
-  const createElement = (el) => {
-    const removeStyle = {
-      position: "absolute",
-      right: "2px",
-      top: 0,
-      cursor: "pointer",
-    };
-
-    return (
-      <Box
-        key={el?.i}
-        data-grid={el}
-        style={{
-          backgroundColor: "transparent",
-          border: "1px solid black",
-          textAlign: "center",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <Button
-          sx={{ p: 1 }}
-          onClick={() => {
-            router.push(`/dashboard/${el?.i}`);
-          }}
-        >
-          <Typography variant="h6">{el?.i}</Typography>
-        </Button>
-        <span
-          className="remove"
-          // @ts-ignore
-          style={removeStyle}
-          onClick={() => onRemoveItem(el?.i)}
-        >
-          x
-        </span>
-      </Box>
-    );
-  };
-
-  const onRemoveItem = async (i) => {
-    try {
-      console.log("i", i);
-      await removeSurvey(i, user?.accessToken);
-      const newItems = _.reject(items, { i: i });
-      setItems(newItems);
+      await addPost({ name });
     } catch (e) {
       console.log("e === ", e);
     }
   };
 
   return (
-    <>
-      <Box>
-        <Button
-          onClick={onAddItem}
-          sx={{ justifySelf: "end", textAlign: "center" }}
-        >
-          Add
-        </Button>
+    <Container maxWidth="xl" sx={{}}>
+      <Stack
+        sx={{ justifyContent: "center", mb: 3 }}
+        direction="row"
+        spacing={2}
+      >
         <Typography
           textAlign="center"
           variant="h2"
-          sx={{ justifySelf: "center" }}
+          sx={{ justifySelf: "center", mt: 3, mb: 3 }}
         >
           Your surveys
         </Typography>
-      </Box>
-      <ResponsiveReactGridLayout
-        onLayoutChange={(layout) => setLayout(layout)}
-        onBreakpointChange={(breakpoint, cols) =>
-          // @ts-ignore
-          setBreakpoint({ breakpoint, cols })
-        }
-        className="layout"
-        cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
-        rowHeight={100}
+        <Box alignSelf="center">
+          <IconButton onClick={onAddItem} color="primary">
+            <Tooltip title="Add new survey">
+              <AddIcon sx={{ bgcolor: "primary" }} />
+            </Tooltip>
+          </IconButton>
+        </Box>
+      </Stack>
+      <Grid
+        container
+        spacing={{ xs: 2, md: 3 }}
+        rowGap={2}
+        columns={{ xs: 4, sm: 8, md: 12 }}
       >
-        {_.map(items, (el) => createElement(el))}
-      </ResponsiveReactGridLayout>
-    </>
+        {surveys?.map((survey) => {
+          return (
+            <Grid
+              item
+              xs={2}
+              sm={4}
+              md={4}
+              key={survey.name}
+              sx={{
+                textAlign: "center",
+              }}
+              onClick={() => router.push(`/dashboard/${survey.name}`)}
+            >
+              <Item sx={{ "&: hover": { cursor: "pointer" } }}>
+                <Tooltip title={survey.name}>
+                  <Typography noWrap>{survey.name}</Typography>
+                </Tooltip>
+              </Item>
+            </Grid>
+          );
+        })}
+      </Grid>
+    </Container>
   );
 };
 

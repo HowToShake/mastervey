@@ -5,8 +5,8 @@ import Typography from "@mui/material/Typography";
 import FormControl from "@mui/material/FormControl";
 import { Checkbox, FormControlLabel, FormGroup } from "@mui/material";
 import * as React from "react";
-import { useAppDispatch, useAppSelector } from "../../../../hooks/redux";
-import { updateAnswer } from "../../../../slices/CreateSurvey";
+import { useAppDispatch, useAppSelector } from "@hooks/redux";
+import { updateAnswer } from "@slices/createSurvey";
 
 const MultipleChoice = ({ question }) => {
   const answers = useAppSelector((state) =>

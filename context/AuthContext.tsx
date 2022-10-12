@@ -7,8 +7,10 @@ import {
   User,
   UserCredential,
 } from "firebase/auth";
-import { auth } from "../utils/firebase";
+import { auth } from "@utils/firebase";
 import nookies from "nookies";
+import { useAppDispatch } from "@hooks/redux";
+import { save } from "@slices/auth";
 
 export type ContextState = {
   user: (User & { accessToken: string }) | null;
@@ -23,6 +25,7 @@ const AuthContext = createContext<ContextState>({
 });
 
 export const AuthProvider = ({ children }) => {
+  const dispatch = useAppDispatch();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -55,6 +58,11 @@ export const AuthProvider = ({ children }) => {
           nookies.set(undefined, "token", "", { path: "/" });
         } else {
           const token = await user.getIdToken(true);
+          dispatch(
+            save({
+              token,
+            })
+          );
           setUser(user);
           nookies.set(undefined, "token", token, { path: "/" });
         }
@@ -68,6 +76,11 @@ export const AuthProvider = ({ children }) => {
       const user = auth.currentUser;
       if (user) {
         const token = await user.getIdToken(true);
+        dispatch(
+          save({
+            token,
+          })
+        );
         setUser(user);
         nookies.set(undefined, "token", token, { path: "/" });
       }

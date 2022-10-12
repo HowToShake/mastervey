@@ -6,8 +6,8 @@ import Typography from "@mui/material/Typography";
 import * as React from "react";
 import CardContent from "@mui/material/CardContent";
 import Card from "@mui/material/Card";
-import { useAppDispatch, useAppSelector } from "../../../../hooks/redux";
-import { updateAnswer } from "../../../../slices/CreateSurvey";
+import { useAppDispatch, useAppSelector } from "@hooks/redux";
+import { updateAnswer } from "@slices/createSurvey";
 
 const Scale = ({ question }) => {
   const answers = useAppSelector((state) =>

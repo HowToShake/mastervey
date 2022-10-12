@@ -6,12 +6,12 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import Button from "@mui/material/Button";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import { useAppDispatch, useAppSelector } from "../../../../hooks/redux";
+import { useAppDispatch, useAppSelector } from "@hooks/redux";
 import {
   addTypeOption,
   deleteTypeOption,
   updateTypeOption,
-} from "../../../../slices/CreateSurvey";
+} from "@slices/createSurvey";
 import { IconButton, Input, InputAdornment } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 

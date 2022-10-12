@@ -7,8 +7,8 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
 import { TextField } from "@mui/material";
 import plLocale from "date-fns/locale/pl";
-import { useAppDispatch, useAppSelector } from "../../../../hooks/redux";
-import { updateAnswer } from "../../../../slices/CreateSurvey";
+import { useAppDispatch, useAppSelector } from "@hooks/redux";
+import { updateAnswer } from "@slices/createSurvey";
 
 const Time = ({ question }) => {
   const answers = useAppSelector((state) =>

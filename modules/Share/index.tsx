@@ -1,4 +1,3 @@
-import Button from "@mui/material/Button";
 import { IconButton } from "@mui/material";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { useRef, useState } from "react";
@@ -38,7 +37,11 @@ const Share = () => {
         }}
       >
         <form>
-          <textarea ref={textAreaRef} value={copyURL} style={{ width: 600 }} />
+          <textarea
+            ref={textAreaRef}
+            value={`<iframe src="${copyURL}" title="View"></iframe>`}
+            style={{ width: 600 }}
+          />
         </form>
         <IconButton onClick={copyToClipboard}>
           <ContentCopyIcon />

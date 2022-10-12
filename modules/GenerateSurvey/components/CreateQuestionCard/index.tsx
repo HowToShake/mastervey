@@ -2,12 +2,11 @@ import * as React from "react";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
-import { Box, FormControlLabel, Switch, TextField } from "@mui/material";
+import { Box, TextField } from "@mui/material";
 import TypeField from "../TypeField";
-
 import TypeOptions from "../TypeOptions";
-import { useAppDispatch, useAppSelector } from "../../../../hooks/redux";
-import { changeQuestionState } from "../../../../slices/CreateSurvey";
+import { useAppDispatch, useAppSelector } from "@hooks/redux";
+import { changeQuestionState } from "@slices/createSurvey";
 
 const CreateQuestionCard = ({ id: questionId }) => {
   const { question } = useAppSelector((state) =>

@@ -4,8 +4,8 @@ import Typography from "@mui/material/Typography";
 import { TextareaAutosize } from "@mui/material";
 import Card from "@mui/material/Card";
 import * as React from "react";
-import { useAppDispatch, useAppSelector } from "../../../../hooks/redux";
-import { updateAnswer } from "../../../../slices/CreateSurvey";
+import { useAppDispatch, useAppSelector } from "@hooks/redux";
+import { updateAnswer } from "@slices/createSurvey";
 
 const LongText = ({ question }) => {
   const answers = useAppSelector((state) =>

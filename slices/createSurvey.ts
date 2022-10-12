@@ -7,17 +7,19 @@ interface TypeOptionsProps {
   label: string;
 }
 
+type QuestionType =
+  | "singleChoice"
+  | "multipleChoice"
+  | "shortText"
+  | "longText"
+  | "scale"
+  | "date"
+  | "time";
+
 interface NewQuestionProps {
   id: string;
   question: string;
-  type:
-    | "singleChoice"
-    | "multipleChoice"
-    | "shortText"
-    | "longText"
-    | "scale"
-    | "date"
-    | "time";
+  type: QuestionType;
   typeOptions: TypeOptionsProps[] | null;
   isRequired: boolean;
 }

@@ -1,31 +1,13 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
 import { useRouter } from "next/router";
-import { useAuth } from "../../hooks/useAuth";
 import AnswerCard from "./components/AnswerCard";
 import Container from "@mui/material/Container";
-import { useQuery } from "react-query";
+import { useGetAnswersQuery } from "../../services/answers";
 
 const Answers = () => {
-  const { user } = useAuth();
   const router = useRouter();
   const { id } = router.query;
 
-  const { data: answers = [] } = useQuery(
-    "answers",
-    async () => {
-      const { data } = await axios.get("/getAnswers", {
-        params: {
-          question: id,
-        },
-        headers: { Authorization: `Bearer ${user?.accessToken}` },
-      });
-      return data;
-    },
-    {
-      enabled: !!user?.accessToken,
-    }
-  );
+  const { data: answers = [] } = useGetAnswersQuery(id as string);
 
   const mergeResults = (arr) => {
     let newResults = {};

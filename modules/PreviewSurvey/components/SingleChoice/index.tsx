@@ -7,8 +7,8 @@ import RadioGroup from "@mui/material/RadioGroup";
 import { FormControlLabel } from "@mui/material";
 import Radio from "@mui/material/Radio";
 import * as React from "react";
-import { useAppDispatch, useAppSelector } from "../../../../hooks/redux";
-import { updateAnswer } from "../../../../slices/CreateSurvey";
+import { useAppDispatch, useAppSelector } from "@hooks/redux";
+import { updateAnswer } from "@slices/createSurvey";
 
 const SingleChoice = ({ question }) => {
   const answers = useAppSelector((state) =>

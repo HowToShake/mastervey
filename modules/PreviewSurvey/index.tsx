@@ -1,5 +1,5 @@
 import Box from "@mui/material/Box";
-import { useAppDispatch, useAppSelector } from "../../hooks/redux";
+import { useAppDispatch, useAppSelector } from "@hooks/redux";
 import { useRouter } from "next/router";
 import Typography from "@mui/material/Typography";
 import { Container } from "@mui/material";
@@ -11,32 +11,27 @@ import LongText from "./components/LongText";
 import Scale from "./components/Scale";
 import DatePicker from "./components/Date";
 import Time from "./components/Time";
-import { useEffect } from "react";
 import {
   setAnswersForQuestion,
   uploadSurveyToCreateSurvey,
-} from "../../slices/CreateSurvey";
+} from "@slices/createSurvey";
 import Button from "@mui/material/Button";
 import SaveIcon from "@mui/icons-material/Save";
 import axios from "axios";
-import { useQuery } from "react-query";
+import { useGetSurveyQuery } from "../../services/surveys";
+import { useEffect } from "react";
 
 const PreviewSurvey = () => {
   const router = useRouter();
   const { id } = router.query;
 
-  const { data: survey } = useQuery(
-    "survey",
-    async () => {
-      const { data } = await axios.get(`getSurvey`, {
-        params: { name: id },
-      });
-      return data;
-    },
-    { enabled: !!id }
+  const { data: survey } = useGetSurveyQuery(id as string);
+
+  const { questionId, answers } = useAppSelector(
+    (state) => state.createSurvey.answers
   );
 
-  console.log("preview", survey);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (survey?.create) {
@@ -48,12 +43,6 @@ const PreviewSurvey = () => {
       );
     }
   }, [survey]);
-
-  const { questionId, answers } = useAppSelector(
-    (state) => state.createSurvey.answers
-  );
-
-  const dispatch = useAppDispatch();
 
   const saveAnswer = async () => {
     try {

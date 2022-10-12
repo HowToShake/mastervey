@@ -2,18 +2,18 @@ import CreateQuestionCard from "./components/CreateQuestionCard";
 import Button from "@mui/material/Button";
 import { Container, Stack } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import { useAppDispatch, useAppSelector } from "../../hooks/redux";
+import { useAppDispatch, useAppSelector } from "@hooks/redux";
 import {
   createNewQuestion,
   uploadSurveyToCreateSurvey,
-} from "../../slices/CreateSurvey";
+} from "@slices/createSurvey";
 import Box from "@mui/material/Box";
 import SaveIcon from "@mui/icons-material/Save";
 import axios from "axios";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "@hooks/useAuth";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { useQuery } from "react-query";
+import { useGetSurveyQuery } from "../../services/surveys";
 
 const GenerateSurvey = () => {
   const { user } = useAuth();
@@ -22,18 +22,7 @@ const GenerateSurvey = () => {
   const router = useRouter();
   const { id } = router.query;
 
-  const { data: survey } = useQuery(
-    "survey",
-    async () => {
-      const { data } = await axios.get(`getSurvey`, {
-        params: { name: id },
-      });
-      return data;
-    },
-    { enabled: !!id }
-  );
-
-  console.log("survey", survey);
+  const { data: survey } = useGetSurveyQuery(id as string);
 
   useEffect(() => {
     if (survey?.create) {
