@@ -29,9 +29,18 @@ export const answersApi = createApi({
         };
       },
     }),
+    saveAnswer: builder.mutation<Answer, any>({
+      query: (body) => {
+        return {
+          url: `saveAnswer`,
+          method: "POST",
+          body,
+        };
+      },
+    }),
   }),
 });
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useGetAnswersQuery } = answersApi;
+export const { useGetAnswersQuery, useSaveAnswerMutation } = answersApi;

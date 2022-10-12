@@ -17,11 +17,11 @@ import {
 } from "@slices/createSurvey";
 import Button from "@mui/material/Button";
 import SaveIcon from "@mui/icons-material/Save";
-import axios from "axios";
 import { useGetSurveyQuery } from "../../../services/surveys";
 import { ReactElement, useEffect } from "react";
 import Navbar from "@components/Navbar";
 import NavSurvey from "@components/NavSurvey";
+import { useSaveAnswerMutation } from "../../../services/answers";
 
 const PreviewSurvey = () => {
   const router = useRouter();
@@ -29,9 +29,9 @@ const PreviewSurvey = () => {
 
   const { data: survey } = useGetSurveyQuery(id as string);
 
-  const { questionId, answers } = useAppSelector(
-    (state) => state.createSurvey.answers
-  );
+  const [saveAnswer, result] = useSaveAnswerMutation();
+
+  const { answers } = useAppSelector((state) => state.createSurvey.answers);
 
   const dispatch = useAppDispatch();
 
@@ -46,14 +46,15 @@ const PreviewSurvey = () => {
     }
   }, [survey]);
 
-  const saveAnswer = async () => {
+  const save = async () => {
     try {
-      const res = await axios.post("/saveAnswer", {
+      const result = await saveAnswer({
         answer: answers,
-        question: questionId,
+        question: id,
       });
 
-      console.log("res", res);
+      console.log("saved!");
+      console.log("result", result);
     } catch (e) {
       console.log("e === ", e);
     }
@@ -62,15 +63,6 @@ const PreviewSurvey = () => {
   if (!survey?.create) {
     return null;
   }
-
-  // useEffect(() => {
-  //   dispatch(
-  //     setAnswersForQuestion({
-  //       // @ts-ignore
-  //       questionId: id,
-  //     })
-  //   );
-  // }, [id]);
 
   return (
     <Container maxWidth="lg">
@@ -138,7 +130,7 @@ const PreviewSurvey = () => {
         color="success"
         variant="outlined"
         startIcon={<SaveIcon />}
-        onClick={saveAnswer}
+        onClick={save}
       >
         Save
       </Button>
