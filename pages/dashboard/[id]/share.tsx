@@ -1,9 +1,12 @@
 import { IconButton } from "@mui/material";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import { useRef, useState } from "react";
+import { ReactElement, useRef, useState } from "react";
 import Box from "@mui/material/Box";
 import { useRouter } from "next/router";
 import Typography from "@mui/material/Typography";
+import Navbar from "@components/Navbar";
+import NavSurvey from "@components/NavSurvey";
+import * as React from "react";
 
 const Share = () => {
   const router = useRouter();
@@ -65,5 +68,17 @@ const Share = () => {
     </>
   );
 };
+
+Share.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <>
+      <Navbar />
+      <NavSurvey />
+      {page}
+    </>
+  );
+};
+
+Share.requireAuth = true;
 
 export default Share;

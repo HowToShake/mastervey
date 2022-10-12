@@ -1,7 +1,10 @@
 import { useRouter } from "next/router";
-import AnswerCard from "./components/AnswerCard";
+import AnswerCard from "@modules/Answers/components/AnswerCard";
 import Container from "@mui/material/Container";
-import { useGetAnswersQuery } from "../../services/answers";
+import { useGetAnswersQuery } from "../../../services/answers";
+import { ReactElement } from "react";
+import Navbar from "@components/Navbar";
+import NavSurvey from "@components/NavSurvey";
 
 const Answers = () => {
   const router = useRouter();
@@ -39,5 +42,17 @@ const Answers = () => {
     </>
   );
 };
+
+Answers.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <>
+      <Navbar />
+      <NavSurvey />
+      {page}
+    </>
+  );
+};
+
+Answers.requireAuth = true;
 
 export default Answers;

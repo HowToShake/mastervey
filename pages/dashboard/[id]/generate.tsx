@@ -1,4 +1,4 @@
-import CreateQuestionCard from "./components/CreateQuestionCard";
+import CreateQuestionCard from "@modules/GenerateSurvey/components/CreateQuestionCard";
 import Button from "@mui/material/Button";
 import { Container, Stack } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
@@ -12,8 +12,11 @@ import SaveIcon from "@mui/icons-material/Save";
 import axios from "axios";
 import { useAuth } from "@hooks/useAuth";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
-import { useGetSurveyQuery } from "../../services/surveys";
+import { ReactElement, useEffect } from "react";
+import { useGetSurveyQuery } from "../../../services/surveys";
+import Navbar from "@components/Navbar";
+import Dashboard from "@pages/dashboard";
+import NavSurvey from "@components/NavSurvey";
 
 const GenerateSurvey = () => {
   const { user } = useAuth();
@@ -87,5 +90,17 @@ const GenerateSurvey = () => {
     </Container>
   );
 };
+
+GenerateSurvey.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <>
+      <Navbar />
+      <NavSurvey />
+      {page}
+    </>
+  );
+};
+
+GenerateSurvey.requireAuth = true;
 
 export default GenerateSurvey;

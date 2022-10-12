@@ -116,7 +116,7 @@ const Dashboard = () => {
               sx={{
                 textAlign: "center",
               }}
-              onClick={() => router.push(`/dashboard/${survey.name}`)}
+              onClick={() => router.push(`/dashboard/${survey.name}/generate`)}
             >
               <Item sx={{ "&: hover": { cursor: "pointer" } }}>
                 <Tooltip title={survey.name}>

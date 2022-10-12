@@ -4,13 +4,13 @@ import { useRouter } from "next/router";
 import Typography from "@mui/material/Typography";
 import { Container } from "@mui/material";
 import * as React from "react";
-import SingleChoice from "./components/SingleChoice";
-import MultipleChoice from "./components/MultipleChoice";
-import ShortText from "./components/ShortText";
-import LongText from "./components/LongText";
-import Scale from "./components/Scale";
-import DatePicker from "./components/Date";
-import Time from "./components/Time";
+import SingleChoice from "@modules/PreviewSurvey/components/SingleChoice";
+import MultipleChoice from "@modules/PreviewSurvey/components/MultipleChoice";
+import ShortText from "@modules/PreviewSurvey/components/ShortText";
+import LongText from "@modules/PreviewSurvey/components/LongText";
+import Scale from "@modules/PreviewSurvey/components/Scale";
+import DatePicker from "@modules/PreviewSurvey/components/Date";
+import Time from "@modules/PreviewSurvey/components/Time";
 import {
   setAnswersForQuestion,
   uploadSurveyToCreateSurvey,
@@ -18,8 +18,10 @@ import {
 import Button from "@mui/material/Button";
 import SaveIcon from "@mui/icons-material/Save";
 import axios from "axios";
-import { useGetSurveyQuery } from "../../services/surveys";
-import { useEffect } from "react";
+import { useGetSurveyQuery } from "../../../services/surveys";
+import { ReactElement, useEffect } from "react";
+import Navbar from "@components/Navbar";
+import NavSurvey from "@components/NavSurvey";
 
 const PreviewSurvey = () => {
   const router = useRouter();
@@ -61,14 +63,14 @@ const PreviewSurvey = () => {
     return null;
   }
 
-  useEffect(() => {
-    dispatch(
-      setAnswersForQuestion({
-        // @ts-ignore
-        questionId: id,
-      })
-    );
-  }, [id]);
+  // useEffect(() => {
+  //   dispatch(
+  //     setAnswersForQuestion({
+  //       // @ts-ignore
+  //       questionId: id,
+  //     })
+  //   );
+  // }, [id]);
 
   return (
     <Container maxWidth="lg">
@@ -143,5 +145,17 @@ const PreviewSurvey = () => {
     </Container>
   );
 };
+
+PreviewSurvey.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <>
+      <Navbar />
+      <NavSurvey />
+      {page}
+    </>
+  );
+};
+
+PreviewSurvey.requireAuth = true;
 
 export default PreviewSurvey;
