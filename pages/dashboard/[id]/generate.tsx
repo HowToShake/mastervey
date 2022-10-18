@@ -17,6 +17,7 @@ import { useGetSurveyQuery } from "../../../services/surveys";
 import Navbar from "@components/Navbar";
 import Dashboard from "@pages/dashboard";
 import NavSurvey from "@components/NavSurvey";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 const GenerateSurvey = () => {
   const { user } = useAuth();
@@ -25,7 +26,7 @@ const GenerateSurvey = () => {
   const router = useRouter();
   const { id } = router.query;
 
-  const { data: survey } = useGetSurveyQuery(id as string);
+  const { data: survey, isLoading } = useGetSurveyQuery(id as string);
 
   useEffect(() => {
     if (survey?.create) {
@@ -76,7 +77,8 @@ const GenerateSurvey = () => {
           mb={3}
           mt={2}
         >
-          <Button
+          <LoadingButton
+            loading={isLoading}
             sx={{ width: "100%" }}
             color="success"
             variant="outlined"
@@ -84,7 +86,7 @@ const GenerateSurvey = () => {
             onClick={saveSurvey}
           >
             Save
-          </Button>
+          </LoadingButton>
         </Stack>
       )}
     </Container>

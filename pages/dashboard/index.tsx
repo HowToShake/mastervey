@@ -10,14 +10,7 @@ import { useAuth } from "@hooks/useAuth";
 import axios from "axios";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import {
-  Button,
-  Container,
-  IconButton,
-  Paper,
-  Stack,
-  Tooltip,
-} from "@mui/material";
+import { Container, IconButton, Paper, Stack, Tooltip } from "@mui/material";
 import {
   uniqueNamesGenerator,
   adjectives,
@@ -25,8 +18,6 @@ import {
   animals,
 } from "unique-names-generator";
 import { useRouter } from "next/router";
-import { useAppDispatch } from "@hooks/redux";
-import { saveSurvey } from "@slices/createSurvey";
 import {
   useCreateSurveyMutation,
   useGetSurveysQuery,
@@ -56,12 +47,12 @@ const removeSurvey = async (question, accessToken) => {
 };
 
 const Dashboard = () => {
-  const { user } = useAuth();
   const router = useRouter();
 
-  const dispatch = useAppDispatch();
-
-  const { data: surveys = [] } = useGetSurveysQuery();
+  const { data: surveys } = useGetSurveysQuery(null, {
+    refetchOnMountOrArgChange: true,
+    refetchOnFocus: true,
+  });
 
   const [addPost, result] = useCreateSurveyMutation();
 
@@ -71,7 +62,7 @@ const Dashboard = () => {
         dictionaries: [adjectives, colors, animals],
       });
 
-      await addPost({ name });
+      await addPost({ name, isPublic: true });
     } catch (e) {
       console.log("e === ", e);
     }

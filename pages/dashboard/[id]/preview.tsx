@@ -11,10 +11,7 @@ import LongText from "@modules/PreviewSurvey/components/LongText";
 import Scale from "@modules/PreviewSurvey/components/Scale";
 import DatePicker from "@modules/PreviewSurvey/components/Date";
 import Time from "@modules/PreviewSurvey/components/Time";
-import {
-  setAnswersForQuestion,
-  uploadSurveyToCreateSurvey,
-} from "@slices/createSurvey";
+import { uploadSurveyToCreateSurvey } from "@slices/createSurvey";
 import Button from "@mui/material/Button";
 import SaveIcon from "@mui/icons-material/Save";
 import { useGetSurveyQuery } from "../../../services/surveys";
@@ -27,7 +24,9 @@ const PreviewSurvey = () => {
   const router = useRouter();
   const { id } = router.query;
 
-  const { data: survey } = useGetSurveyQuery(id as string);
+  const { data: survey } = useGetSurveyQuery(id as string, {
+    refetchOnMountOrArgChange: true,
+  });
 
   const [saveAnswer, result] = useSaveAnswerMutation();
 

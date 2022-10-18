@@ -10,7 +10,9 @@ const Answers = () => {
   const router = useRouter();
   const { id } = router.query;
 
-  const { data: answers = [] } = useGetAnswersQuery(id as string);
+  const { data: answers = [] } = useGetAnswersQuery(id as string, {
+    refetchOnMountOrArgChange: true,
+  });
 
   const mergeResults = (arr) => {
     let newResults = {};

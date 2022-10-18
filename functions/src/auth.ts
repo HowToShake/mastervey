@@ -6,6 +6,8 @@ export const signup = functions.https.onRequest((request, response) => {
   cors(request, response, async () => {
     const { email, password } = request.body;
 
+    console.log("email Function", email, password);
+
     const { uid } = await admin.auth().createUser({
       email,
       password,

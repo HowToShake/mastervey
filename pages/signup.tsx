@@ -1,14 +1,20 @@
 import { ReactElement } from "react";
 import Navbar from "../components/Navbar";
 import { useForm } from "react-hook-form";
-import Button from "@mui/material/Button";
+import LoadingButton from "@mui/lab/LoadingButton";
 import Box from "@mui/material/Box";
-import { Container, TextField } from "@mui/material";
-import { useMutation } from "react-query";
-import axios from "axios";
+import {
+  Card,
+  CardActions,
+  CardHeader,
+  Container,
+  TextField,
+} from "@mui/material";
 import { useRouter } from "next/router";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "@hooks/useAuth";
 import Typography from "@mui/material/Typography";
+import { useSignupMutation } from "../services/auth";
+import CardContent from "@mui/material/CardContent";
 
 const Signup = () => {
   const router = useRouter();
@@ -17,15 +23,14 @@ const Signup = () => {
     register,
     handleSubmit,
     formState: { errors },
+    setError,
   } = useForm();
 
-  const { mutateAsync } = useMutation((signup) => {
-    return axios.post("signup", signup);
-  });
+  const [signup, { isLoading }] = useSignupMutation();
 
   const onSubmit = async (data) => {
     try {
-      await mutateAsync(data);
+      await signup(data);
 
       const loginRes = await login(data.email, data.password);
 
@@ -34,6 +39,7 @@ const Signup = () => {
       }
     } catch (e) {
       console.log("e === ", e);
+      setError("submit", { ...e, message: e?.message });
     }
   };
 
@@ -44,38 +50,59 @@ const Signup = () => {
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
+          alignItems: "center",
         }}
         maxWidth="md"
       >
-        <Typography variant="h2" textAlign="center" mb={2}>
-          Signup
-        </Typography>
-
-        <form
-          id="signup"
-          onSubmit={handleSubmit(onSubmit)}
-          style={{ display: "flex", flexDirection: "column", height: 280 }}
-        >
-          <TextField
-            label="Email"
-            fullWidth
-            {...register("email")}
-            variant="outlined"
-            sx={{ mt: 2 }}
+        <Card sx={{ width: 500 }}>
+          <CardHeader
+            title="Signup"
+            titleTypographyProps={{ variant: "h2", textAlign: "center", mb: 2 }}
           />
-          <TextField
-            label="Password"
-            type="password"
-            fullWidth
-            {...register("password", { required: true })}
-            variant="outlined"
-            sx={{ mt: 2 }}
-          />
-          {errors.lastName && <p>Password is required.</p>}
-        </form>
-        <Button type="submit" form="signup" sx={{ textAlign: "center" }}>
-          Submit
-        </Button>
+          <CardContent>
+            <form
+              id="signup"
+              onSubmit={handleSubmit(onSubmit)}
+              style={{ display: "flex", flexDirection: "column", height: 280 }}
+            >
+              <TextField
+                label="Email"
+                fullWidth
+                {...register("email")}
+                variant="outlined"
+                sx={{ mt: 2 }}
+              />
+              <TextField
+                label="Password"
+                type="password"
+                fullWidth
+                {...register("password", { required: true })}
+                variant="outlined"
+                sx={{ mt: 2 }}
+              />
+              {errors.lastName && <p>Password is required.</p>}
+            </form>
+          </CardContent>
+          <CardActions
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              flexDirection: "column",
+            }}
+          >
+            <LoadingButton
+              type="submit"
+              form="signup"
+              sx={{ textAlign: "center" }}
+              loading={isLoading}
+            >
+              Submit
+            </LoadingButton>
+            <Typography color="error" textAlign="center" mt={2}>
+              {errors?.submit && <p>{errors?.submit?.message}</p>}
+            </Typography>
+          </CardActions>
+        </Card>
       </Container>
     </>
   );

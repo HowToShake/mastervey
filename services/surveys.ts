@@ -32,6 +32,19 @@ export const surveyApi = createApi({
           body,
         };
       },
+
+      async onQueryStarted(body, { dispatch, queryFulfilled }) {
+        dispatch(
+          surveyApi.util.updateQueryData("getSurveys", undefined, (draft) => {
+            draft.push(body);
+          })
+        );
+        try {
+          await queryFulfilled;
+        } catch (err) {
+          console.error("e === ", err);
+        }
+      },
     }),
     getSurvey: builder.query<Survey, string>({
       query: (id) => {

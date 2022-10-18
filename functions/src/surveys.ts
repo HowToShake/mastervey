@@ -6,7 +6,7 @@ export const createSurvey = functions.https.onRequest((req, res) => {
   cors(req, res, async () => {
     try {
       const tokenId = req.get("Authorization")?.split("Bearer ")[1];
-      const { name } = req.body;
+      const { name, isPublic } = req.body;
 
       if (!tokenId || typeof tokenId === "undefined") {
         res.status(403).send("Unauthorized");
@@ -14,7 +14,13 @@ export const createSurvey = functions.https.onRequest((req, res) => {
 
       const { uid } = await admin.auth().verifyIdToken(tokenId as string);
 
-      const newSurvey = { userId: uid, create: [], answers: [], name };
+      const newSurvey = {
+        userId: uid,
+        create: [],
+        answers: [],
+        name,
+        isPublic,
+      };
 
       await admin.firestore().collection("surveys").doc().create(newSurvey);
 
