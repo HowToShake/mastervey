@@ -48,6 +48,7 @@ const validationSchema = yup.object().shape({
 interface Answer {
   id: string;
   answers: string[];
+  questionId: string;
 }
 
 interface Survey {
@@ -67,13 +68,12 @@ export interface AnswerProps {
 
 const PreviewSurvey = ({ survey }: { survey: Survey }) => {
   const { user } = useAuth();
-  const { coords, isGeolocationAvailable, isGeolocationEnabled } =
-    useGeolocated({
-      positionOptions: {
-        enableHighAccuracy: true,
-      },
-      userDecisionTimeout: 5000,
-    });
+  const { coords } = useGeolocated({
+    positionOptions: {
+      enableHighAccuracy: true,
+    },
+    userDecisionTimeout: 5000,
+  });
 
   const {
     query: { id },
@@ -110,7 +110,11 @@ const PreviewSurvey = ({ survey }: { survey: Survey }) => {
         question: id,
         meta: {
           resolvedAt: new Date(),
-          resolvedBy: user || "anonymous",
+          resolvedBy:
+            {
+              uid: user?.uid,
+              email: user?.email,
+            } || "anonymous",
           resolvedInPlace: {
             latitude: coords?.latitude || -1,
             longitude: coords?.longitude || -1,
@@ -124,8 +128,6 @@ const PreviewSurvey = ({ survey }: { survey: Survey }) => {
       console.log("e === ", e);
     }
   };
-
-  console.log(errors);
 
   return (
     <Container

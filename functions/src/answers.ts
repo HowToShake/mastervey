@@ -4,7 +4,7 @@ import { cors } from "./index";
 
 export const saveAnswer = functions.https.onRequest((req, res) => {
   cors(req, res, async () => {
-    const { answer, question } = req.body;
+    const { answer, question, meta } = req.body;
 
     const surveysRef = admin.firestore().collection("surveys");
     const snapshot = await surveysRef.where("name", "==", question).get();
@@ -18,7 +18,13 @@ export const saveAnswer = functions.https.onRequest((req, res) => {
 
     const data = snapshot.docs.map((doc) => doc.data());
 
-    const newAnswersArray = [...data?.[0]?.answers, ...answer];
+    const newAnswersArray = [
+      ...(data?.[0]?.answers || []),
+      {
+        userAnswers: answer,
+        ...meta,
+      },
+    ];
 
     const update = admin
       .firestore()

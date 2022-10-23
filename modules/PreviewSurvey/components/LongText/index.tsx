@@ -26,7 +26,10 @@ const LongText: FC<AnswerProps> = ({ question, index, update, answers }) => {
           style={{ width: 600, maxWidth: 900 }}
           value={(answers?.[0] as string) || ""}
           onChange={(e) => {
-            update(index, { id: question.id, answers: [e.target.value] });
+            update(index, {
+              questionId: question.id,
+              answers: [e.target.value],
+            });
           }}
         />
       </CardContent>

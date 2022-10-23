@@ -29,7 +29,7 @@ const ShortText: FC<AnswerProps> = ({ question, update, index, answers }) => {
           value={[answers]}
           onChange={(e) => {
             update(index, {
-              id: question.id,
+              questionId: question.id,
               answers: [e.target.value],
             });
           }}

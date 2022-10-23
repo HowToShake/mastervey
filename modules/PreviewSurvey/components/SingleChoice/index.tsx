@@ -10,6 +10,7 @@ import { ChangeEvent, FC } from "react";
 import { AnswerProps } from "@pages/dashboard/[id]/preview";
 
 const SingleChoice: FC<AnswerProps> = ({ question, index, update }) => {
+  console.log("question.id", question.id);
   return (
     <Card sx={{ boxShadow: 3 }}>
       <CardContent>
@@ -35,8 +36,12 @@ const SingleChoice: FC<AnswerProps> = ({ question, index, update }) => {
                   control={<Radio value={option.text} />}
                   label={option.text}
                   onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                    console.log("onChange", {
+                      questionId: question.id,
+                      answers: [e.target.value],
+                    });
                     update(index, {
-                      id: question.id,
+                      questionId: question.id,
                       answers: [e.target.value],
                     });
                   }}

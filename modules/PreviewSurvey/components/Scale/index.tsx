@@ -5,7 +5,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import CardContent from "@mui/material/CardContent";
 import Card from "@mui/material/Card";
-import { FC } from "react";
+import { ChangeEvent, FC } from "react";
 import { AnswerProps } from "@pages/dashboard/[id]/preview";
 
 const Scale: FC<AnswerProps> = ({ question, answers, index, update }) => {
@@ -33,10 +33,9 @@ const Scale: FC<AnswerProps> = ({ question, answers, index, update }) => {
             // @ts-ignore
             defaultValue={answers?.answers?.[0]?.value}
             max={10}
-            onChange={(e) => {
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
               update(index, {
-                id: question.id,
-                //@ts-ignore
+                questionId: question.id,
                 answers: [e.target.value],
               });
             }}

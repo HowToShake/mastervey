@@ -15,7 +15,7 @@ export const createSurvey = functions.https.onRequest((req, res) => {
       const { uid } = await admin.auth().verifyIdToken(tokenId as string);
 
       const newSurvey = {
-        userId: uid,
+        createdBy: uid,
         create: [],
         answers: [],
         name,

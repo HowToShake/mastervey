@@ -29,8 +29,7 @@ const DatePicker: FC<AnswerProps> = ({ question, update, index, answers }) => {
             value={answers[0] ? new Date(answers[0]) : new Date()}
             onChange={(e) => {
               update(index, {
-                id: question.id,
-                // @ts-ignore
+                questionId: question.id,
                 answers: [new Date(e)],
               });
             }}
