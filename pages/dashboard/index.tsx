@@ -34,6 +34,8 @@ import Grid from "@mui/material/Grid";
 import { experimentalStyled as styled } from "@mui/material/styles";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import AddNewSurveyDrawer from "@modules/Dashboard/components/AddNewSurveyDrawer";
+import DeleteIcon from "@mui/icons-material/Delete";
+import * as React from "react";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",

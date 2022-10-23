@@ -15,6 +15,7 @@ type FormInputProps = {
   InputProps?: InputProps;
   placeholder?: string;
   defaultValue?: string | number;
+  type?: string;
 };
 
 const FormInput: FC<FormInputProps> = ({
@@ -25,6 +26,7 @@ const FormInput: FC<FormInputProps> = ({
   InputProps,
   placeholder,
   defaultValue,
+  type,
 }) => {
   return (
     <Controller
@@ -37,7 +39,7 @@ const FormInput: FC<FormInputProps> = ({
           fullWidth
           label={label || name}
           margin="normal"
-          type="text"
+          type={type || "text"}
           variant="outlined"
           error={!!errors?.[name]}
           helperText={errors?.[name]?.message as string}

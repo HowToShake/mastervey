@@ -6,6 +6,7 @@ import {
   deleteSurvey,
   saveSurvey,
   getSurveys,
+  getHashedSurvey,
 } from "./surveys";
 import { getAnswers, saveAnswer } from "./answers";
 
@@ -21,6 +22,7 @@ export {
   signup,
   createSurvey,
   getSurvey,
+  getHashedSurvey,
   deleteSurvey,
   saveSurvey,
   getSurveys,

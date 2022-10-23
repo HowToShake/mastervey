@@ -51,12 +51,14 @@ interface Answer {
   questionId: string;
 }
 
-interface Survey {
+export interface Survey {
   answers: Answer[];
   name: string;
   create: Question[];
   isPublic: boolean;
   userId: string;
+  shareLink: string;
+  bgcolor: string;
 }
 
 export interface AnswerProps {
@@ -135,7 +137,7 @@ const PreviewSurvey = ({ survey }: { survey: Survey }) => {
       sx={{ display: "flex", flexDirection: "column", mb: 5 }}
     >
       <Typography textAlign="center" variant="h3" mb={3}>
-        Preview
+        <b>Preview</b>
       </Typography>
       <form
         id="resolve-survey"

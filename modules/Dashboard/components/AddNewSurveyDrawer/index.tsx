@@ -89,6 +89,7 @@ const AddNewSurveyDrawer = ({ isDrawerOpen, setIsDrawerOpen }) => {
           <FormInput
             control={control}
             name="name"
+            label="Name"
             placeholder="Name"
             errors={errors}
             defaultValue={name}
@@ -105,6 +106,15 @@ const AddNewSurveyDrawer = ({ isDrawerOpen, setIsDrawerOpen }) => {
                 />
               );
             }}
+          />
+          <FormInput
+            control={control}
+            name="bgcolor"
+            label="Background color"
+            placeholder="Background color"
+            errors={errors}
+            defaultValue="#000"
+            type="color"
           />
         </form>
         <div style={{ flex: 1 }} />
