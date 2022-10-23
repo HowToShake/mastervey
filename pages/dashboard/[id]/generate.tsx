@@ -1,9 +1,8 @@
-import { useAuth } from "@hooks/useAuth";
-import { Container } from "@mui/material";
+import { Container, FormControlLabel, Switch } from "@mui/material";
 import { useMutation, useQuery } from "react-query";
 import axios from "axios";
 import { useRouter } from "next/router";
-import { useFieldArray, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { ReactElement, useEffect } from "react";
@@ -20,11 +19,10 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import SaveIcon from "@mui/icons-material/Save";
 
 const validationSchema = yup.object().shape({
-  isAnonymous: yup.boolean(),
+  isPublic: yup.boolean(),
 });
 
 const Generate = () => {
-  const { token } = useAuth();
   const {
     query: { id },
   } = useRouter();
@@ -40,25 +38,23 @@ const Generate = () => {
 
   const { mutateAsync, isLoading } = useMutation(
     "saveSurvey",
-    async ({ dynamic }: { dynamic: Question[] }) => {
-      const { data } = await axios.post(
-        "saveSurvey",
-        { create: dynamic, name: id },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+    async (input: { create: Question[]; isPublic: string }) => {
+      const { data } = await axios.post("saveSurvey", {
+        create: input?.create,
+        name: id,
+        isPublic: input?.isPublic,
+      });
       return data;
     }
   );
 
   const { fields, remove, update, append } = useFieldArray({
     control,
-    name: "dynamic",
+    name: "create",
   });
 
   useEffect(() => {
-    setValue("dynamic", survey?.create);
+    setValue("create", survey?.create);
   }, [survey]);
 
   return (
@@ -68,6 +64,21 @@ const Generate = () => {
     >
       {/*@ts-ignore*/}
       <form id="generate-survey" onSubmit={handleSubmit(mutateAsync)}>
+        <Grid item xs={12}>
+          <Controller
+            control={control}
+            name="isPublic"
+            defaultValue={true}
+            render={({ field }) => {
+              return (
+                <FormControlLabel
+                  control={<Switch defaultChecked={field.value} {...field} />}
+                  label="Is survey public?"
+                />
+              );
+            }}
+          />
+        </Grid>
         <Grid container spacing={2}>
           {fields?.map((field: Question, index: number) => {
             return (

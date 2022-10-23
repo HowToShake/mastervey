@@ -6,7 +6,7 @@ import FormControl from "@mui/material/FormControl";
 import RadioGroup from "@mui/material/RadioGroup";
 import { FormControlLabel } from "@mui/material";
 import Radio from "@mui/material/Radio";
-import { FC } from "react";
+import { ChangeEvent, FC } from "react";
 import { AnswerProps } from "@pages/dashboard/[id]/preview";
 
 const SingleChoice: FC<AnswerProps> = ({ question, index, update }) => {
@@ -34,10 +34,9 @@ const SingleChoice: FC<AnswerProps> = ({ question, index, update }) => {
                 <FormControlLabel
                   control={<Radio value={option.text} />}
                   label={option.text}
-                  onChange={(e) => {
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
                     update(index, {
                       id: question.id,
-                      //  @ts-ignore
                       answers: [e.target.value],
                     });
                   }}

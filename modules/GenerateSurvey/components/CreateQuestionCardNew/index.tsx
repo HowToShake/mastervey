@@ -60,7 +60,7 @@ export interface Question {
 interface CreateQuestionCardNewType {
   control: Control;
   index: number;
-  update: UseFieldArrayUpdate<FieldValues, "dynamic">;
+  update: UseFieldArrayUpdate<FieldValues, "create">;
   remove: UseFieldArrayRemove;
   question: Question;
 }
@@ -84,7 +84,7 @@ const CreateQuestionCardNew: React.FC<CreateQuestionCardNewType> = ({
     remove: removeOption,
   } = useFieldArray({
     control,
-    name: `dynamic.${index}.options`,
+    name: `create.${index}.options`,
   });
 
   const visibleDynamicOptions =
