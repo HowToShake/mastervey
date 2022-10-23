@@ -9,16 +9,10 @@ import { TextField } from "@mui/material";
 import plLocale from "date-fns/locale/pl";
 import { useAppDispatch, useAppSelector } from "@hooks/redux";
 import { updateAnswer } from "@slices/createSurvey";
+import { FC } from "react";
+import { AnswerProps } from "@pages/dashboard/[id]/preview";
 
-const Time = ({ question }) => {
-  const answers = useAppSelector((state) =>
-    state.createSurvey.answers.answers.find(
-      (que) => que.questionId === question?.id
-    )
-  );
-
-  const dispatch = useAppDispatch();
-
+const Time: FC<AnswerProps> = ({ question, update, index, answers }) => {
   return (
     <Card sx={{ boxShadow: 3 }}>
       <CardContent>
@@ -35,16 +29,9 @@ const Time = ({ question }) => {
         <LocalizationProvider dateAdapter={AdapterDateFns} locale={plLocale}>
           <TimePicker
             inputFormat="HH:mm"
-            value={answers?.answers?.[0] || null}
+            value={answers?.[0] || null}
             onChange={(e) => {
-              console.log("e", e);
-              dispatch(
-                updateAnswer({
-                  //@ts-ignore
-                  id: question.id,
-                  answers: [e],
-                })
-              );
+              update(index, { id: question.id, answers: [e] });
             }}
             renderInput={(params) => <TextField {...params} />}
           />

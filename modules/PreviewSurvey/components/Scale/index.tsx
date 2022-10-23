@@ -3,21 +3,12 @@ import CircleIcon from "@mui/icons-material/Circle";
 import CircleOutlinedIcon from "@mui/icons-material/CircleOutlined";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import * as React from "react";
 import CardContent from "@mui/material/CardContent";
 import Card from "@mui/material/Card";
-import { useAppDispatch, useAppSelector } from "@hooks/redux";
-import { updateAnswer } from "@slices/createSurvey";
+import { FC } from "react";
+import { AnswerProps } from "@pages/dashboard/[id]/preview";
 
-const Scale = ({ question }) => {
-  const answers = useAppSelector((state) =>
-    state.createSurvey.answers.answers.find(
-      (que) => que.questionId === question?.id
-    )
-  );
-
-  const dispatch = useAppDispatch();
-
+const Scale: FC<AnswerProps> = ({ question, answers, index, update }) => {
   return (
     <Card sx={{ boxShadow: 3 }}>
       <CardContent>
@@ -34,8 +25,8 @@ const Scale = ({ question }) => {
         <Box
           sx={{ alignItems: "center", display: "flex", flexDirection: "row" }}
         >
-          {question?.typeOptions?.[0]?.label && (
-            <Typography mr={2}>{question?.typeOptions?.[0]?.label}</Typography>
+          {question?.options?.[0]?.text && (
+            <Typography mr={2}>{question?.options?.[0]?.text}</Typography>
           )}
           <Rating
             name="highlight-selected-only"
@@ -43,20 +34,17 @@ const Scale = ({ question }) => {
             defaultValue={answers?.answers?.[0]?.value}
             max={10}
             onChange={(e) => {
-              dispatch(
-                updateAnswer({
-                  //@ts-ignore
-                  id: question.id,
-                  //@ts-ignore
-                  answers: [e.target.value],
-                })
-              );
+              update(index, {
+                id: question.id,
+                //@ts-ignore
+                answers: [e.target.value],
+              });
             }}
             icon={<CircleIcon fontSize="inherit" />}
             emptyIcon={<CircleOutlinedIcon fontSize="inherit" />}
           />
-          {question?.typeOptions?.[1]?.label && (
-            <Typography ml={2}>{question?.typeOptions?.[1]?.label}</Typography>
+          {question?.options?.[1]?.text && (
+            <Typography ml={2}>{question?.options?.[1]?.text}</Typography>
           )}
         </Box>
       </CardContent>

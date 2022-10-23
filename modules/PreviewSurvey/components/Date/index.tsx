@@ -6,20 +6,10 @@ import * as React from "react";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { TextField } from "@mui/material";
-import { useAppDispatch, useAppSelector } from "@hooks/redux";
-import { updateAnswer } from "@slices/createSurvey";
+import { AnswerProps } from "@pages/dashboard/[id]/preview";
+import { FC } from "react";
 
-const DatePicker = ({ question }) => {
-  const answers = useAppSelector((state) =>
-    state.createSurvey.answers.answers.find(
-      (que) => que.questionId === question?.id
-    )
-  );
-
-  const dispatch = useAppDispatch();
-
-  const value = answers?.answers?.[0] ? answers.answers[0] : null;
-
+const DatePicker: FC<AnswerProps> = ({ question, update, index, answers }) => {
   return (
     <Card sx={{ boxShadow: 3 }}>
       <CardContent>
@@ -35,17 +25,14 @@ const DatePicker = ({ question }) => {
         </Box>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <DesktopDatePicker
-            inputFormat="dd.mm.yyyy"
-            value={value}
+            inputFormat="dd.MM.yyyy"
+            value={answers[0] ? new Date(answers[0]) : new Date()}
             onChange={(e) => {
-              dispatch(
-                updateAnswer({
-                  //@ts-ignore
-                  id: question.id,
-                  // @ts-ignore
-                  answers: [new Date(e)],
-                })
-              );
+              update(index, {
+                id: question.id,
+                // @ts-ignore
+                answers: [new Date(e)],
+              });
             }}
             renderInput={(params) => <TextField {...params} />}
           />

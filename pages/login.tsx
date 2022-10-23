@@ -3,7 +3,7 @@ import Navbar from "../components/Navbar";
 import Box from "@mui/material/Box";
 import { Container, TextField } from "@mui/material";
 import Button from "@mui/material/Button";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "@hooks/useAuth";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import Typography from "@mui/material/Typography";
@@ -76,7 +76,7 @@ const Login = () => {
       </Button>
 
       <Typography color="error" textAlign="center" mt={2}>
-        {errors?.submit && <p>{errors?.submit?.message}</p>}
+        {errors?.submit && <p>{errors?.submit?.message as string}</p>}
       </Typography>
     </Container>
   );

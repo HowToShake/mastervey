@@ -25,6 +25,7 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import Grid from "@mui/material/Grid";
 import { experimentalStyled as styled } from "@mui/material/styles";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -33,6 +34,7 @@ const Item = styled(Paper)(({ theme }) => ({
   textAlign: "center",
   color: theme.palette.text.secondary,
 }));
+
 const removeSurvey = async (question, accessToken) => {
   try {
     await axios.delete("/deleteSurvey", {
@@ -47,14 +49,40 @@ const removeSurvey = async (question, accessToken) => {
 };
 
 const Dashboard = () => {
+  const { token } = useAuth();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
-  const { data: surveys } = useGetSurveysQuery(null, {
-    refetchOnMountOrArgChange: true,
-    refetchOnFocus: true,
+  const { data: surveys } = useQuery("getSurveys", async () => {
+    const { data } = await axios.get("/getSurveys", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return data;
   });
 
-  const [addPost, result] = useCreateSurveyMutation();
+  const { mutateAsync } = useMutation(
+    "createSurvey",
+    async (body: Record<string, unknown>) => {
+      const { data } = await axios.post("/createSurvey", body, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      return data;
+    },
+    {
+      onSuccess: (data) => {
+        const previousSurveys = queryClient.getQueryData("getSurveys");
+
+        queryClient.setQueryData("getSurveys", (old: unknown[]) => [
+          ...old,
+          data,
+        ]);
+      },
+    }
+  );
 
   const onAddItem = async () => {
     try {
@@ -62,7 +90,7 @@ const Dashboard = () => {
         dictionaries: [adjectives, colors, animals],
       });
 
-      await addPost({ name, isPublic: true });
+      await mutateAsync({ name, isPublic: true });
     } catch (e) {
       console.log("e === ", e);
     }

@@ -1,9 +1,8 @@
-import Box from "@mui/material/Box";
-import { useAppDispatch, useAppSelector } from "@hooks/redux";
 import { useRouter } from "next/router";
 import Typography from "@mui/material/Typography";
 import { Container } from "@mui/material";
 import * as React from "react";
+import { ReactElement } from "react";
 import SingleChoice from "@modules/PreviewSurvey/components/SingleChoice";
 import MultipleChoice from "@modules/PreviewSurvey/components/MultipleChoice";
 import ShortText from "@modules/PreviewSurvey/components/ShortText";
@@ -11,44 +10,78 @@ import LongText from "@modules/PreviewSurvey/components/LongText";
 import Scale from "@modules/PreviewSurvey/components/Scale";
 import DatePicker from "@modules/PreviewSurvey/components/Date";
 import Time from "@modules/PreviewSurvey/components/Time";
-import { uploadSurveyToCreateSurvey } from "@slices/createSurvey";
-import Button from "@mui/material/Button";
 import SaveIcon from "@mui/icons-material/Save";
-import { useGetSurveyQuery } from "../../../services/surveys";
-import { ReactElement, useEffect } from "react";
 import Navbar from "@components/Navbar";
 import NavSurvey from "@components/NavSurvey";
-import { useSaveAnswerMutation } from "../../../services/answers";
+import { dehydrate, QueryClient, useMutation } from "react-query";
+import axios from "axios";
+import { useFieldArray, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { LoadingButton } from "@mui/lab";
+import {
+  Question,
+  QuestionTypes,
+} from "@modules/GenerateSurvey/components/CreateQuestionCardNew";
+import Grid from "@mui/material/Grid";
 
-const PreviewSurvey = () => {
-  const router = useRouter();
-  const { id } = router.query;
+const validationSchema = yup.object().shape({
+  isAnonymous: yup.boolean(),
+  answers: yup.object().shape({
+    id: yup.string(),
+    answers: yup.array(),
+  }),
+});
 
-  const { data: survey } = useGetSurveyQuery(id as string, {
-    refetchOnMountOrArgChange: true,
+interface Answer {
+  id: string;
+  answers: string[];
+}
+
+interface Survey {
+  answers: Answer[];
+  name: string;
+  create: Question[];
+  isPublic: boolean;
+  userId: string;
+}
+
+export interface AnswerProps {
+  question: Question;
+  index: number;
+  update: (index: number, value: unknown) => void;
+  answers?: string[];
+}
+
+const PreviewSurvey = ({ survey }: { survey: Survey }) => {
+  const {
+    query: { id },
+  } = useRouter();
+
+  const { control } = useForm({
+    resolver: yupResolver(validationSchema),
+    defaultValues: {
+      answers: survey?.create.map(() => ({ answers: [] })),
+    },
   });
 
-  const [saveAnswer, result] = useSaveAnswerMutation();
+  const { fields, update } = useFieldArray({
+    control,
+    name: "answers",
+  });
 
-  const { answers } = useAppSelector((state) => state.createSurvey.answers);
-
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    if (survey?.create) {
-      dispatch(
-        uploadSurveyToCreateSurvey({
-          // @ts-ignore
-          survey,
-        })
-      );
+  const { mutateAsync: saveAnswer, isLoading: isSaving } = useMutation(
+    "saveAnswer",
+    async (body: any) => {
+      const { data } = await axios.post("saveAnswer", body);
+      return { data };
     }
-  }, [survey]);
+  );
 
   const save = async () => {
     try {
       const result = await saveAnswer({
-        answer: answers,
+        answer: fields,
         question: id,
       });
 
@@ -59,80 +92,116 @@ const PreviewSurvey = () => {
     }
   };
 
-  if (!survey?.create) {
-    return null;
-  }
-
   return (
-    <Container maxWidth="lg">
-      <Typography textAlign="center" variant="h3">
+    <Container
+      maxWidth="lg"
+      sx={{ display: "flex", flexDirection: "column", mb: 5 }}
+    >
+      <Typography textAlign="center" variant="h3" mb={3}>
         Preview
       </Typography>
-      {survey?.create?.map((question) => {
-        switch (question.type) {
-          case "singleChoice": {
-            return (
-              <Box mt={2} mb={2}>
-                <SingleChoice question={question} />
-              </Box>
-            );
+      <Grid container spacing={2}>
+        {survey?.create?.map((question, index) => {
+          switch (question.type) {
+            case QuestionTypes.SINGLECHOICE: {
+              return (
+                <Grid item xs={12}>
+                  <SingleChoice
+                    question={question}
+                    index={index}
+                    update={update}
+                  />
+                </Grid>
+              );
+            }
+            case QuestionTypes.MULTIPLECHOICE: {
+              return (
+                <Grid item xs={12}>
+                  <MultipleChoice
+                    question={question}
+                    index={index}
+                    update={update}
+                    answers={fields?.[index]?.answers}
+                  />
+                </Grid>
+              );
+            }
+            case QuestionTypes.SHORTTEXT: {
+              return (
+                <Grid item xs={12}>
+                  <ShortText
+                    question={question}
+                    index={index}
+                    update={update}
+                    answers={fields?.[index]?.answers}
+                  />
+                </Grid>
+              );
+            }
+            case QuestionTypes.LONGTEXT: {
+              return (
+                <Grid item xs={12}>
+                  <LongText
+                    question={question}
+                    index={index}
+                    update={update}
+                    answers={fields?.[index]?.answers}
+                  />
+                </Grid>
+              );
+            }
+            case QuestionTypes.SCALE: {
+              return (
+                <Grid item xs={12}>
+                  <Scale
+                    question={question}
+                    index={index}
+                    update={update}
+                    answers={fields?.[index]?.answers}
+                  />
+                </Grid>
+              );
+            }
+            case QuestionTypes.DATE: {
+              return (
+                <Grid item xs={12}>
+                  <DatePicker
+                    question={question}
+                    index={index}
+                    update={update}
+                    answers={fields?.[index]?.answers}
+                  />
+                </Grid>
+              );
+            }
+            case QuestionTypes.TIME: {
+              return (
+                <Grid item xs={12}>
+                  <Time
+                    question={question}
+                    index={index}
+                    update={update}
+                    answers={fields?.[index]?.answers}
+                  />
+                </Grid>
+              );
+            }
+            default:
+              return null;
           }
-          case "multipleChoice": {
-            return (
-              <Box mt={2} mb={2}>
-                <MultipleChoice question={question} />
-              </Box>
-            );
-          }
-          case "shortText": {
-            return (
-              <Box mt={2} mb={2}>
-                <ShortText question={question} />
-              </Box>
-            );
-          }
-          case "longText": {
-            return (
-              <Box mt={2} mb={2}>
-                <LongText question={question} />
-              </Box>
-            );
-          }
-          case "scale": {
-            return (
-              <Box mt={2} mb={2}>
-                <Scale question={question} />
-              </Box>
-            );
-          }
-          case "date": {
-            return (
-              <Box mt={2} mb={2}>
-                <DatePicker question={question} />
-              </Box>
-            );
-          }
-          case "time": {
-            return (
-              <Box mt={2} mb={2}>
-                <Time question={question} />
-              </Box>
-            );
-          }
-          default:
-            return null;
-        }
-      })}
+        })}
+      </Grid>
 
-      <Button
-        sx={{ width: "100%" }}
+      <LoadingButton
+        loading={isSaving}
+        sx={{ width: "100%", mt: 3 }}
         color="success"
         variant="outlined"
         startIcon={<SaveIcon />}
         onClick={save}
       >
         Save
-      </Button>
+      </LoadingButton>
     </Container>
   );
 };
@@ -148,5 +217,23 @@ PreviewSurvey.getLayout = function getLayout(page: ReactElement) {
 };
 
 PreviewSurvey.requireAuth = true;
+
+export async function getServerSideProps(context) {
+  const queryClient = new QueryClient();
+  await queryClient.prefetchQuery("getSurvey", async () => {
+    const { data } = await axios.get("getSurvey", {
+      params: { name: context.params.id },
+    });
+    return data;
+  });
+
+  const data = dehydrate(queryClient).queries?.[0]?.state?.data || [];
+
+  return {
+    props: {
+      survey: data,
+    },
+  };
+}
 
 export default PreviewSurvey;

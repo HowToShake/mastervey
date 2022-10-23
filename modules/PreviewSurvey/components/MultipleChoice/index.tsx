@@ -4,42 +4,15 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import FormControl from "@mui/material/FormControl";
 import { Checkbox, FormControlLabel, FormGroup } from "@mui/material";
-import * as React from "react";
-import { useAppDispatch, useAppSelector } from "@hooks/redux";
-import { updateAnswer } from "@slices/createSurvey";
+import { FC } from "react";
+import { AnswerProps } from "@pages/dashboard/[id]/preview";
 
-const MultipleChoice = ({ question }) => {
-  const answers = useAppSelector((state) =>
-    state.createSurvey.answers.answers.find(
-      (que) => que.questionId === question?.id
-    )
-  );
-
-  const dispatch = useAppDispatch();
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const response = event.target.name;
-
-    if (answers?.answers?.includes(response)) {
-      const newState = answers?.answers?.filter((value) => value !== response);
-
-      return dispatch(
-        updateAnswer({
-          //@ts-ignore
-          id: question.id,
-          answers: newState,
-        })
-      );
-    }
-    return dispatch(
-      updateAnswer({
-        //@ts-ignore
-        id: question.id,
-        answers: [...(answers?.answers || []), response],
-      })
-    );
-  };
-
+const MultipleChoice: FC<AnswerProps> = ({
+  question,
+  index,
+  update,
+  answers,
+}) => {
   return (
     <Card sx={{ boxShadow: 3 }}>
       <CardContent>
@@ -55,18 +28,40 @@ const MultipleChoice = ({ question }) => {
         </Box>
         <FormControl sx={{ m: 3 }} component="fieldset" variant="standard">
           <FormGroup>
-            {question?.typeOptions?.map((option, index) => {
+            {question?.options?.map((option) => {
+              const isChecked = answers?.includes(option.text) || false;
               return (
                 <FormControlLabel
-                  key={index}
+                  key={option.text}
                   control={
                     <Checkbox
-                      checked={answers?.answers?.includes(option.label)}
-                      onChange={handleChange}
-                      name={option.label}
+                      checked={isChecked}
+                      onChange={(e) => {
+                        const answer = e.target.name;
+
+                        const isAnswerAlreadyChecked =
+                          answers?.includes(answer);
+
+                        if (isAnswerAlreadyChecked) {
+                          const newAnswers = answers.filter(
+                            (value) => value !== answer
+                          );
+
+                          return update(index, {
+                            id: question.id,
+                            answers: newAnswers,
+                          });
+                        }
+
+                        return update(index, {
+                          id: question.id,
+                          answers: [...(answers || []), answer],
+                        });
+                      }}
+                      name={option.text}
                     />
                   }
-                  label={option.label}
+                  label={option.text}
                 />
               );
             })}

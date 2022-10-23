@@ -1,17 +1,24 @@
 import { useRouter } from "next/router";
 import AnswerCard from "@modules/Answers/components/AnswerCard";
 import Container from "@mui/material/Container";
-import { useGetAnswersQuery } from "../../../services/answers";
 import { ReactElement } from "react";
 import Navbar from "@components/Navbar";
 import NavSurvey from "@components/NavSurvey";
+import { useQuery } from "react-query";
+import axios from "axios";
 
 const Answers = () => {
-  const router = useRouter();
-  const { id } = router.query;
+  const {
+    query: { id },
+  } = useRouter();
 
-  const { data: answers = [] } = useGetAnswersQuery(id as string, {
-    refetchOnMountOrArgChange: true,
+  const { data: answers = [] } = useQuery("getAnswers", async () => {
+    const { data } = await axios.get("getAnswers", {
+      params: {
+        question: id,
+      },
+    });
+    return data;
   });
 
   const mergeResults = (arr) => {

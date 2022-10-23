@@ -58,16 +58,6 @@ const NavSurvey = () => {
             </Link>
           }
         />
-        <Tab
-          value={`/dashboard/${id}/generate-new`}
-          label={
-            <Link href={`/dashboard/${id}/generate-new`}>
-              <Typography color="primary">
-                <b>Generate new</b>
-              </Typography>
-            </Link>
-          }
-        />
       </Tabs>
     </Box>
   );

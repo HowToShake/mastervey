@@ -13,8 +13,9 @@ import {
 import { useRouter } from "next/router";
 import { useAuth } from "@hooks/useAuth";
 import Typography from "@mui/material/Typography";
-import { useSignupMutation } from "../services/auth";
 import CardContent from "@mui/material/CardContent";
+import { useMutation } from "react-query";
+import axios from "axios";
 
 const Signup = () => {
   const router = useRouter();
@@ -26,7 +27,13 @@ const Signup = () => {
     setError,
   } = useForm();
 
-  const [signup, { isLoading }] = useSignupMutation();
+  const { mutateAsync: signup, isLoading } = useMutation(
+    "signup",
+    async (body) => {
+      const { data } = await axios.post("signup", body);
+      return data;
+    }
+  );
 
   const onSubmit = async (data) => {
     try {
@@ -99,7 +106,7 @@ const Signup = () => {
               Submit
             </LoadingButton>
             <Typography color="error" textAlign="center" mt={2}>
-              {errors?.submit && <p>{errors?.submit?.message}</p>}
+              {errors?.submit && <p>{errors?.submit?.message as string}</p>}
             </Typography>
           </CardActions>
         </Card>

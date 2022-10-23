@@ -1,99 +1,119 @@
-import CreateQuestionCard from "@modules/GenerateSurvey/components/CreateQuestionCard";
-import Button from "@mui/material/Button";
-import { Container, Stack } from "@mui/material";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import { useAppDispatch, useAppSelector } from "@hooks/redux";
-import {
-  createNewQuestion,
-  uploadSurveyToCreateSurvey,
-} from "@slices/createSurvey";
-import Box from "@mui/material/Box";
-import SaveIcon from "@mui/icons-material/Save";
-import axios from "axios";
 import { useAuth } from "@hooks/useAuth";
+import { Container } from "@mui/material";
+import { useMutation, useQuery } from "react-query";
+import axios from "axios";
 import { useRouter } from "next/router";
+import { useFieldArray, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 import { ReactElement, useEffect } from "react";
-import { useGetSurveyQuery } from "../../../services/surveys";
 import Navbar from "@components/Navbar";
-import Dashboard from "@pages/dashboard";
 import NavSurvey from "@components/NavSurvey";
+import Button from "@mui/material/Button";
+import CreateQuestionCardNew, {
+  Question,
+  QuestionTypes,
+} from "@modules/GenerateSurvey/components/CreateQuestionCardNew";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import Grid from "@mui/material/Grid";
 import LoadingButton from "@mui/lab/LoadingButton";
+import SaveIcon from "@mui/icons-material/Save";
 
-const GenerateSurvey = () => {
-  const { user } = useAuth();
-  const { createSurvey } = useAppSelector((state) => state.createSurvey);
-  const dispatch = useAppDispatch();
-  const router = useRouter();
-  const { id } = router.query;
+const validationSchema = yup.object().shape({
+  isAnonymous: yup.boolean(),
+});
 
-  const { data: survey, isLoading } = useGetSurveyQuery(id as string);
+const Generate = () => {
+  const { token } = useAuth();
+  const {
+    query: { id },
+  } = useRouter();
+
+  const { data: survey } = useQuery("getSurvey", async () => {
+    const { data } = await axios.get("getSurvey", { params: { name: id } });
+    return data;
+  });
+
+  const { handleSubmit, control, setValue } = useForm({
+    resolver: yupResolver(validationSchema),
+  });
+
+  const { mutateAsync, isLoading } = useMutation(
+    "saveSurvey",
+    async ({ dynamic }: { dynamic: Question[] }) => {
+      const { data } = await axios.post(
+        "saveSurvey",
+        { create: dynamic, name: id },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      return data;
+    }
+  );
+
+  const { fields, remove, update, append } = useFieldArray({
+    control,
+    name: "dynamic",
+  });
 
   useEffect(() => {
-    if (survey?.create) {
-      dispatch(
-        uploadSurveyToCreateSurvey({
-          // @ts-ignore
-          survey,
-        })
-      );
-    }
+    setValue("dynamic", survey?.create);
   }, [survey]);
 
-  const saveSurvey = async () => {
-    try {
-      const res = await axios.post(
-        "/saveSurvey",
-        { create: createSurvey, name: id },
-        { headers: { Authorization: `Bearer ${user?.accessToken}` } }
-      );
-
-      console.log("res", res);
-    } catch (e) {
-      console.log("e === ", e);
-    }
-  };
-
   return (
-    <Container maxWidth="lg" sx={{ display: "flex", flexDirection: "column" }}>
-      {createSurvey?.map((question) => {
-        return (
-          <Box mt={2} mb={2}>
-            <CreateQuestionCard id={question.id} />
-          </Box>
-        );
-      })}
+    <Container
+      maxWidth="lg"
+      sx={{ display: "flex", flexDirection: "column", mb: 5 }}
+    >
+      {/*@ts-ignore*/}
+      <form id="generate-survey" onSubmit={handleSubmit(mutateAsync)}>
+        <Grid container spacing={2}>
+          {fields?.map((field: Question, index: number) => {
+            return (
+              <Grid item xs={12}>
+                <CreateQuestionCardNew
+                  remove={remove}
+                  control={control}
+                  update={update}
+                  index={index}
+                  question={field}
+                />
+              </Grid>
+            );
+          })}
+        </Grid>
+      </form>
       <Button
-        sx={{ mt: 5 }}
+        sx={{ mt: 5, mb: 2 }}
         variant="outlined"
+        fullWidth
         startIcon={<AddCircleOutlineIcon />}
-        onClick={() => dispatch(createNewQuestion())}
+        onClick={() =>
+          append({
+            question: "",
+            options: [],
+            type: QuestionTypes.SINGLECHOICE,
+          })
+        }
       >
         Add question
       </Button>
-      {createSurvey?.length !== 0 && (
-        <Stack
-          direction="row"
-          sx={{ justifyContent: "space-between" }}
-          mb={3}
-          mt={2}
-        >
-          <LoadingButton
-            loading={isLoading}
-            sx={{ width: "100%" }}
-            color="success"
-            variant="outlined"
-            startIcon={<SaveIcon />}
-            onClick={saveSurvey}
-          >
-            Save
-          </LoadingButton>
-        </Stack>
-      )}
+      <LoadingButton
+        variant="outlined"
+        fullWidth
+        startIcon={<SaveIcon />}
+        loading={isLoading}
+        type="submit"
+        form="generate-survey"
+      >
+        Save
+      </LoadingButton>
     </Container>
   );
 };
 
-GenerateSurvey.getLayout = function getLayout(page: ReactElement) {
+Generate.getLayout = function getLayout(page: ReactElement) {
   return (
     <>
       <Navbar />
@@ -103,6 +123,6 @@ GenerateSurvey.getLayout = function getLayout(page: ReactElement) {
   );
 };
 
-GenerateSurvey.requireAuth = true;
+Generate.requireAuth = true;
 
-export default GenerateSurvey;
+export default Generate;

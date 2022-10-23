@@ -1,4 +1,4 @@
-import React, { createContext, FC, useEffect, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
@@ -9,8 +9,6 @@ import {
 } from "firebase/auth";
 import { auth } from "@utils/firebase";
 import nookies from "nookies";
-import { useAppDispatch } from "@hooks/redux";
-import { save } from "@slices/auth";
 
 export type ContextState = {
   user: (User & { accessToken: string }) | null;
@@ -18,6 +16,7 @@ export type ContextState = {
   login?: (email: string, password: string) => Promise<UserCredential>;
   logout?: () => Promise<void>;
   resetPassword?: (password: string) => Promise<void>;
+  token?: string | null;
 };
 
 const AuthContext = createContext<ContextState>({
@@ -25,8 +24,8 @@ const AuthContext = createContext<ContextState>({
 });
 
 export const AuthProvider = ({ children }) => {
-  const dispatch = useAppDispatch();
   const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   const signup = async (
@@ -58,11 +57,8 @@ export const AuthProvider = ({ children }) => {
           nookies.set(undefined, "token", "", { path: "/" });
         } else {
           const token = await user.getIdToken(true);
-          dispatch(
-            save({
-              token,
-            })
-          );
+
+          setToken(token);
           setUser(user);
           nookies.set(undefined, "token", token, { path: "/" });
         }
@@ -76,11 +72,8 @@ export const AuthProvider = ({ children }) => {
       const user = auth.currentUser;
       if (user) {
         const token = await user.getIdToken(true);
-        dispatch(
-          save({
-            token,
-          })
-        );
+
+        setToken(token);
         setUser(user);
         nookies.set(undefined, "token", token, { path: "/" });
       }
@@ -93,6 +86,7 @@ export const AuthProvider = ({ children }) => {
   const value: ContextState = {
     // @ts-ignore
     user,
+    token,
     login,
     signup,
     logout,

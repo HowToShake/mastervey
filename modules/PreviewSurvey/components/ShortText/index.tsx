@@ -6,16 +6,10 @@ import Card from "@mui/material/Card";
 import * as React from "react";
 import { useAppDispatch, useAppSelector } from "@hooks/redux";
 import { updateAnswer } from "@slices/createSurvey";
+import { FC } from "react";
+import { AnswerProps } from "@pages/dashboard/[id]/preview";
 
-const ShortText = ({ question }) => {
-  const answers = useAppSelector((state) =>
-    state.createSurvey.answers.answers.find(
-      (que) => que.questionId === question?.id
-    )
-  );
-
-  const dispatch = useAppDispatch();
-
+const ShortText: FC<AnswerProps> = ({ question, update, index, answers }) => {
   return (
     <Card sx={{ boxShadow: 3 }}>
       <CardContent>
@@ -31,16 +25,13 @@ const ShortText = ({ question }) => {
         </Box>
         <TextField
           sx={{ width: 600 }}
-          required={question?.required}
-          value={answers?.answers?.[0] || ""}
+          // required={question?.required}
+          value={[answers]}
           onChange={(e) => {
-            dispatch(
-              updateAnswer({
-                //@ts-ignore
-                id: question.id,
-                answers: [e.target.value],
-              })
-            );
+            update(index, {
+              id: question.id,
+              answers: [e.target.value],
+            });
           }}
           placeholder="Answer"
           inputProps={{ maxLength: 50 }}

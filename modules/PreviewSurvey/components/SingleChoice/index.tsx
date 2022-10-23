@@ -6,19 +6,10 @@ import FormControl from "@mui/material/FormControl";
 import RadioGroup from "@mui/material/RadioGroup";
 import { FormControlLabel } from "@mui/material";
 import Radio from "@mui/material/Radio";
-import * as React from "react";
-import { useAppDispatch, useAppSelector } from "@hooks/redux";
-import { updateAnswer } from "@slices/createSurvey";
+import { FC } from "react";
+import { AnswerProps } from "@pages/dashboard/[id]/preview";
 
-const SingleChoice = ({ question }) => {
-  const answers = useAppSelector((state) =>
-    state.createSurvey.answers.answers.find(
-      (que) => que.questionId === question?.id
-    )
-  );
-
-  const dispatch = useAppDispatch();
-
+const SingleChoice: FC<AnswerProps> = ({ question, index, update }) => {
   return (
     <Card sx={{ boxShadow: 3 }}>
       <CardContent>
@@ -38,20 +29,17 @@ const SingleChoice = ({ question }) => {
             defaultValue="female"
             name="radio-buttons-group"
           >
-            {question?.typeOptions?.map((option) => {
+            {question?.options?.map((option) => {
               return (
                 <FormControlLabel
-                  value={answers?.answers?.[0]}
-                  control={<Radio value={option.label} />}
-                  label={option.label}
+                  control={<Radio value={option.text} />}
+                  label={option.text}
                   onChange={(e) => {
-                    dispatch(
-                      updateAnswer({
-                        //@ts-ignore
-                        id: question.id,
-                        answers: [option.label],
-                      })
-                    );
+                    update(index, {
+                      id: question.id,
+                      //  @ts-ignore
+                      answers: [e.target.value],
+                    });
                   }}
                 />
               );

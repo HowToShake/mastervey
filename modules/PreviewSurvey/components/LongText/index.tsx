@@ -3,18 +3,10 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { TextareaAutosize } from "@mui/material";
 import Card from "@mui/material/Card";
-import * as React from "react";
-import { useAppDispatch, useAppSelector } from "@hooks/redux";
-import { updateAnswer } from "@slices/createSurvey";
+import { FC } from "react";
+import { AnswerProps } from "@pages/dashboard/[id]/preview";
 
-const LongText = ({ question }) => {
-  const answers = useAppSelector((state) =>
-    state.createSurvey.answers.answers.find(
-      (que) => que.questionId === question?.id
-    )
-  );
-
-  const dispatch = useAppDispatch();
+const LongText: FC<AnswerProps> = ({ question, index, update, answers }) => {
   return (
     <Card sx={{ boxShadow: 3 }}>
       <CardContent>
@@ -29,18 +21,12 @@ const LongText = ({ question }) => {
           <Typography variant="h4">{question.question}</Typography>
         </Box>
         <TextareaAutosize
-          required={question.required}
+          // required={question.required}
           placeholder="Long text"
-          style={{ width: 600 }}
-          value={(answers?.answers?.[0] as string) || ""}
+          style={{ width: 600, maxWidth: 900 }}
+          value={(answers?.[0] as string) || ""}
           onChange={(e) => {
-            dispatch(
-              updateAnswer({
-                //@ts-ignore
-                id: question.id,
-                answers: [e.target.value],
-              })
-            );
+            update(index, { id: question.id, answers: [e.target.value] });
           }}
         />
       </CardContent>

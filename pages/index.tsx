@@ -2,7 +2,6 @@ import Head from "next/head";
 import { ReactElement } from "react";
 import { NextPageWithLayout } from "./_app";
 import Navbar from "../components/Navbar";
-import Typography from "@mui/material/Typography";
 
 const Home: NextPageWithLayout = (props) => {
   return (
