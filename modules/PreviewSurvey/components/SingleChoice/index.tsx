@@ -10,7 +10,14 @@ import { ChangeEvent, FC } from "react";
 import { AnswerProps } from "@pages/dashboard/[id]/preview";
 
 const SingleChoice: FC<AnswerProps> = ({ question, index, update }) => {
-  console.log("question.id", question.id);
+  console.log("question", question);
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+    update(index, {
+      questionId: question.id,
+      answers: [e.target.value],
+    });
+  };
+
   return (
     <Card sx={{ boxShadow: 3 }}>
       <CardContent>
@@ -33,18 +40,9 @@ const SingleChoice: FC<AnswerProps> = ({ question, index, update }) => {
             {question?.options?.map((option) => {
               return (
                 <FormControlLabel
-                  control={<Radio value={option.text} />}
+                  control={<Radio value={option.text} onChange={onChange} />}
                   label={option.text}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                    console.log("onChange", {
-                      questionId: question.id,
-                      answers: [e.target.value],
-                    });
-                    update(index, {
-                      questionId: question.id,
-                      answers: [e.target.value],
-                    });
-                  }}
+                  onChange={onChange}
                 />
               );
             })}

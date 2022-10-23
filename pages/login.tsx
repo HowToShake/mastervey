@@ -18,6 +18,8 @@ const Login = () => {
     setError,
   } = useForm();
 
+  console.log("user", user);
+
   useEffect(() => {
     if (user) push("/dashboard");
   }, [user]);

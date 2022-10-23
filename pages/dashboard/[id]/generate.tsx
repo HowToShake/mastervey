@@ -42,7 +42,6 @@ const Generate = () => {
       const { data } = await axios.post("saveSurvey", {
         create: input?.create,
         name: id,
-        isPublic: input?.isPublic,
       });
       return data;
     }
@@ -64,21 +63,6 @@ const Generate = () => {
     >
       {/*@ts-ignore*/}
       <form id="generate-survey" onSubmit={handleSubmit(mutateAsync)}>
-        <Grid item xs={12}>
-          <Controller
-            control={control}
-            name="isPublic"
-            defaultValue={true}
-            render={({ field }) => {
-              return (
-                <FormControlLabel
-                  control={<Switch defaultChecked={field.value} {...field} />}
-                  label="Is survey public?"
-                />
-              );
-            }}
-          />
-        </Grid>
         <Grid container spacing={2}>
           {fields?.map((field: Question, index: number) => {
             return (

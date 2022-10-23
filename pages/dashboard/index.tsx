@@ -10,7 +10,14 @@ import { useAuth } from "@hooks/useAuth";
 import axios from "axios";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import { Container, IconButton, Paper, Stack, Tooltip } from "@mui/material";
+import {
+  Container,
+  Drawer,
+  IconButton,
+  Paper,
+  Stack,
+  Tooltip,
+} from "@mui/material";
 import {
   uniqueNamesGenerator,
   adjectives,
@@ -26,6 +33,7 @@ import AddIcon from "@mui/icons-material/Add";
 import Grid from "@mui/material/Grid";
 import { experimentalStyled as styled } from "@mui/material/styles";
 import { useMutation, useQuery, useQueryClient } from "react-query";
+import AddNewSurveyDrawer from "@modules/Dashboard/components/AddNewSurveyDrawer";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -49,55 +57,16 @@ const removeSurvey = async (question, accessToken) => {
 };
 
 const Dashboard = () => {
-  const { token } = useAuth();
   const router = useRouter();
-  const queryClient = useQueryClient();
+  const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
 
   const { data: surveys } = useQuery("getSurveys", async () => {
-    const { data } = await axios.get("/getSurveys", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const { data } = await axios.get("/getSurveys");
     return data;
   });
 
-  const { mutateAsync } = useMutation(
-    "createSurvey",
-    async (body: Record<string, unknown>) => {
-      const { data } = await axios.post("/createSurvey", body, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      return data;
-    },
-    {
-      onSuccess: (data) => {
-        const previousSurveys = queryClient.getQueryData("getSurveys");
-
-        queryClient.setQueryData("getSurveys", (old: unknown[]) => [
-          ...old,
-          data,
-        ]);
-      },
-    }
-  );
-
-  const onAddItem = async () => {
-    try {
-      const name = uniqueNamesGenerator({
-        dictionaries: [adjectives, colors, animals],
-      });
-
-      await mutateAsync({ name, isPublic: true });
-    } catch (e) {
-      console.log("e === ", e);
-    }
-  };
-
   return (
-    <Container maxWidth="xl" sx={{}}>
+    <Container maxWidth="xl">
       <Stack
         sx={{ justifyContent: "center", mb: 3 }}
         direction="row"
@@ -108,15 +77,22 @@ const Dashboard = () => {
           variant="h2"
           sx={{ justifySelf: "center", mt: 3, mb: 3 }}
         >
-          Your surveys
+          <b>Your surveys</b>
         </Typography>
         <Box alignSelf="center">
-          <IconButton onClick={onAddItem} color="primary">
+          <IconButton
+            onClick={() => setIsDrawerOpen((prev: boolean) => !prev)}
+            color="primary"
+          >
             <Tooltip title="Add new survey">
               <AddIcon sx={{ bgcolor: "primary" }} />
             </Tooltip>
           </IconButton>
         </Box>
+        <AddNewSurveyDrawer
+          isDrawerOpen={isDrawerOpen}
+          setIsDrawerOpen={setIsDrawerOpen}
+        />
       </Stack>
       <Grid
         container
@@ -141,6 +117,9 @@ const Dashboard = () => {
                 <Tooltip title={survey.name}>
                   <Typography noWrap>{survey.name}</Typography>
                 </Tooltip>
+                <Typography noWrap sx={{ fontSize: 8 }}>
+                  {survey.isPublic ? "Public" : "Private"}
+                </Typography>
               </Item>
             </Grid>
           );

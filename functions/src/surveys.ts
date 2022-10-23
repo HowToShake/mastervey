@@ -8,6 +8,8 @@ export const createSurvey = functions.https.onRequest((req, res) => {
       const tokenId = req.get("Authorization")?.split("Bearer ")[1];
       const { name, isPublic } = req.body;
 
+      console.log("isPublic", isPublic);
+
       if (!tokenId || typeof tokenId === "undefined") {
         res.status(403).send("Unauthorized");
       }
@@ -42,7 +44,7 @@ export const getSurveys = functions.https.onRequest((req, res) => {
     const { uid } = await admin.auth().verifyIdToken(tokenId as string);
 
     const surveysRef = admin.firestore().collection("surveys");
-    const snapshot = await surveysRef.where("userId", "==", uid).get();
+    const snapshot = await surveysRef.where("createdBy", "==", uid).get();
 
     functions.logger.log(snapshot);
 
