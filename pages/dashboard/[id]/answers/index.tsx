@@ -1,5 +1,4 @@
 import { useRouter } from "next/router";
-import AnswerCard from "@modules/Answers/components/AnswerCard";
 import Container from "@mui/material/Container";
 import { ReactElement, useState } from "react";
 import Navbar from "@components/Navbar";
