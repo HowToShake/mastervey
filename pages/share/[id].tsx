@@ -56,7 +56,11 @@ const SharePage = ({ survey }: { survey: Survey }) => {
     query: { id },
   } = useRouter();
 
-  const { handleSubmit, control } = useForm({
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm({
     resolver: yupResolver(validationSchema),
     defaultValues: {
       answers: survey?.create?.map(() => ({ answers: [] })),
@@ -76,11 +80,12 @@ const SharePage = ({ survey }: { survey: Survey }) => {
     }
   );
 
-  const save = async () => {
+  const save = async (data) => {
     try {
+      // console.log("save data", data, "id", id);
       const result = await saveAnswer({
         answer: fields,
-        question: id,
+        question: survey.name,
         meta: {
           resolvedAt: new Date(),
           resolvedBy:
@@ -132,6 +137,8 @@ const SharePage = ({ survey }: { survey: Survey }) => {
     );
   }
 
+  console.log("ERRORS === ", errors);
+
   return (
     <Box
       sx={{
@@ -151,10 +158,7 @@ const SharePage = ({ survey }: { survey: Survey }) => {
         <Typography textAlign="center" variant="h3" mb={3}>
           <b>Preview</b>
         </Typography>
-        <form
-          id="resolve-survey"
-          onSubmit={handleSubmit(async (data) => await save())}
-        >
+        <form id="resolve-survey" onSubmit={handleSubmit(save)}>
           <Grid container spacing={2}>
             {survey?.create?.map((question, index) => {
               switch (question.type) {

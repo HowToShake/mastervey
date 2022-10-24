@@ -30,7 +30,8 @@ const columns: GridColDef[] = [
     headerName: "User",
     field: "resolvedBy.email",
     flex: 1,
-    valueGetter: (params: GridValueGetterParams) => params.row.resolvedBy.email,
+    valueGetter: (params: GridValueGetterParams) =>
+      params.row.resolvedBy.email || "Anonymous",
   },
   {
     headerName: "Resolved at",
