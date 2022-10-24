@@ -1,40 +1,15 @@
-import "/node_modules/react-grid-layout/css/styles.css";
-import "/node_modules/react-resizable/css/styles.css";
-import { ReactElement, useEffect, useState } from "react";
+import { ReactElement, useState } from "react";
 import Navbar from "../../components/Navbar";
-import { WidthProvider, Responsive } from "react-grid-layout";
-import _ from "lodash";
-const ResponsiveReactGridLayout = WidthProvider(Responsive);
-import { useAuth } from "@hooks/useAuth";
-
 import axios from "axios";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
-import {
-  Container,
-  Drawer,
-  IconButton,
-  Paper,
-  Stack,
-  Tooltip,
-} from "@mui/material";
-import {
-  uniqueNamesGenerator,
-  adjectives,
-  colors,
-  animals,
-} from "unique-names-generator";
+import { Container, IconButton, Paper, Stack, Tooltip } from "@mui/material";
 import { useRouter } from "next/router";
-import {
-  useCreateSurveyMutation,
-  useGetSurveysQuery,
-} from "../../services/surveys";
 import AddIcon from "@mui/icons-material/Add";
 import Grid from "@mui/material/Grid";
 import { experimentalStyled as styled } from "@mui/material/styles";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useQuery } from "react-query";
 import AddNewSurveyDrawer from "@modules/Dashboard/components/AddNewSurveyDrawer";
-import DeleteIcon from "@mui/icons-material/Delete";
 import * as React from "react";
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -44,19 +19,6 @@ const Item = styled(Paper)(({ theme }) => ({
   textAlign: "center",
   color: theme.palette.text.secondary,
 }));
-
-const removeSurvey = async (question, accessToken) => {
-  try {
-    await axios.delete("/deleteSurvey", {
-      params: {
-        name: question,
-      },
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
-  } catch (e) {
-    console.log("e === ", e);
-  }
-};
 
 const Dashboard = () => {
   const router = useRouter();

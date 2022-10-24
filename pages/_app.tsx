@@ -6,8 +6,6 @@ import axios, { AxiosRequestConfig } from "axios";
 import { QueryClient, QueryClientProvider, Hydrate } from "react-query";
 import { AuthProvider } from "@context/AuthContext";
 import { AuthGuard } from "@HOC/AuthGuard";
-import { store } from "../store";
-import { Provider } from "react-redux";
 import { ThemeProvider } from "@mui/system";
 import theme from "../styles";
 import nookies from "nookies";
@@ -37,22 +35,20 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
 
   return (
-    <Provider store={store}>
-      <AuthProvider>
-        <ThemeProvider theme={theme}>
-          <QueryClientProvider client={queryClient}>
-            <Hydrate state={pageProps.dehydratedState}>
-              <CssBaseline />
-              {Component.requireAuth ? (
-                <AuthGuard>{getLayout(<Component {...pageProps} />)}</AuthGuard>
-              ) : (
-                getLayout(<Component {...pageProps} />)
-              )}
-            </Hydrate>
-          </QueryClientProvider>
-        </ThemeProvider>
-      </AuthProvider>
-    </Provider>
+    <AuthProvider>
+      <ThemeProvider theme={theme}>
+        <QueryClientProvider client={queryClient}>
+          <Hydrate state={pageProps.dehydratedState}>
+            <CssBaseline />
+            {Component.requireAuth ? (
+              <AuthGuard>{getLayout(<Component {...pageProps} />)}</AuthGuard>
+            ) : (
+              getLayout(<Component {...pageProps} />)
+            )}
+          </Hydrate>
+        </QueryClientProvider>
+      </ThemeProvider>
+    </AuthProvider>
   );
 }
 
