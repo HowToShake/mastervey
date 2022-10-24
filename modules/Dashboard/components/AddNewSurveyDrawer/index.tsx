@@ -113,7 +113,7 @@ const AddNewSurveyDrawer = ({ isDrawerOpen, setIsDrawerOpen }) => {
             label="Background color"
             placeholder="Background color"
             errors={errors}
-            defaultValue="#000"
+            defaultValue="#FFF"
             type="color"
           />
         </form>

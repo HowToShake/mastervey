@@ -8,16 +8,13 @@ import { FormControlLabel } from "@mui/material";
 import Radio from "@mui/material/Radio";
 import { ChangeEvent, FC } from "react";
 import { AnswerProps } from "@pages/dashboard/[id]/preview";
+import { Question } from "@modules/GenerateSurvey/components/CreateQuestionCardNew";
 
-const SingleChoice: FC<AnswerProps> = ({ question, index, update }) => {
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    update(index, {
-      question: question.question,
-      questionId: question.id,
-      answers: [e.target.value],
-    });
-  };
-
+const SingleChoiceAnswer: FC<{ question: Question; answers: string[] }> = ({
+  question,
+  answers,
+}) => {
+  console.log("answers", answers);
   return (
     <Card sx={{ boxShadow: 3 }}>
       <CardContent>
@@ -40,9 +37,15 @@ const SingleChoice: FC<AnswerProps> = ({ question, index, update }) => {
             {question?.options?.map((option) => {
               return (
                 <FormControlLabel
-                  control={<Radio value={option.text} onChange={onChange} />}
+                  control={
+                    <Radio
+                      value={option.text}
+                      checked={answers?.some(
+                        (answer) => answer === option.text
+                      )}
+                    />
+                  }
                   label={option.text}
-                  onChange={onChange}
                 />
               );
             })}
@@ -53,4 +56,4 @@ const SingleChoice: FC<AnswerProps> = ({ question, index, update }) => {
   );
 };
 
-export default SingleChoice;
+export default SingleChoiceAnswer;

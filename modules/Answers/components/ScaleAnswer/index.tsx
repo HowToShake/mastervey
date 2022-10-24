@@ -5,10 +5,10 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import CardContent from "@mui/material/CardContent";
 import Card from "@mui/material/Card";
-import { ChangeEvent, FC } from "react";
+import { FC } from "react";
 import { AnswerProps } from "@pages/dashboard/[id]/preview";
 
-const Scale: FC<AnswerProps> = ({ question, answers, index, update }) => {
+const ScaleAnswer: FC<Partial<AnswerProps>> = ({ question, answers }) => {
   return (
     <Card sx={{ boxShadow: 3 }}>
       <CardContent>
@@ -33,13 +33,6 @@ const Scale: FC<AnswerProps> = ({ question, answers, index, update }) => {
             // @ts-ignore
             defaultValue={answers?.answers?.[0]?.value}
             max={10}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-              update(index, {
-                question: question.question,
-                questionId: question.id,
-                answers: [e.target.value],
-              });
-            }}
             icon={<CircleIcon fontSize="inherit" />}
             emptyIcon={<CircleOutlinedIcon fontSize="inherit" />}
           />
@@ -52,4 +45,4 @@ const Scale: FC<AnswerProps> = ({ question, answers, index, update }) => {
   );
 };
 
-export default Scale;
+export default ScaleAnswer;

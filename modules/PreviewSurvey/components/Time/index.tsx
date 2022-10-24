@@ -31,7 +31,11 @@ const Time: FC<AnswerProps> = ({ question, update, index, answers }) => {
             inputFormat="HH:mm"
             value={answers?.[0] || null}
             onChange={(e) => {
-              update(index, { questionId: question.id, answers: [e] });
+              update(index, {
+                question: question.question,
+                questionId: question.id,
+                answers: [e],
+              });
             }}
             renderInput={(params) => <TextField {...params} />}
           />

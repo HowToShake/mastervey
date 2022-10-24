@@ -48,12 +48,14 @@ const MultipleChoice: FC<AnswerProps> = ({
                           );
 
                           return update(index, {
+                            question: question.question,
                             questionId: question.id,
                             answers: newAnswers,
                           });
                         }
 
                         return update(index, {
+                          question: question.question,
                           questionId: question.id,
                           answers: [...(answers || []), answer],
                         });

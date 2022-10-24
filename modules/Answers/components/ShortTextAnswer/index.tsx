@@ -4,12 +4,10 @@ import Typography from "@mui/material/Typography";
 import { TextField } from "@mui/material";
 import Card from "@mui/material/Card";
 import * as React from "react";
-import { useAppDispatch, useAppSelector } from "@hooks/redux";
-import { updateAnswer } from "@slices/createSurvey";
 import { FC } from "react";
 import { AnswerProps } from "@pages/dashboard/[id]/preview";
 
-const ShortText: FC<AnswerProps> = ({ question, update, index, answers }) => {
+const ShortTextAnswer: FC<Partial<AnswerProps>> = ({ question, answers }) => {
   return (
     <Card sx={{ boxShadow: 3 }}>
       <CardContent>
@@ -25,15 +23,7 @@ const ShortText: FC<AnswerProps> = ({ question, update, index, answers }) => {
         </Box>
         <TextField
           sx={{ width: 600 }}
-          // required={question?.required}
           value={[answers]}
-          onChange={(e) => {
-            update(index, {
-              question: question.question,
-              questionId: question.id,
-              answers: [e.target.value],
-            });
-          }}
           placeholder="Answer"
           inputProps={{ maxLength: 50 }}
         />
@@ -42,4 +32,4 @@ const ShortText: FC<AnswerProps> = ({ question, update, index, answers }) => {
   );
 };
 
-export default ShortText;
+export default ShortTextAnswer;

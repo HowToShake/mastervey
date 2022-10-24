@@ -9,7 +9,7 @@ import { TextField } from "@mui/material";
 import { AnswerProps } from "@pages/dashboard/[id]/preview";
 import { FC } from "react";
 
-const DatePicker: FC<AnswerProps> = ({ question, update, index, answers }) => {
+const DatePickerAnswer: FC<Partial<AnswerProps>> = ({ question, answers }) => {
   return (
     <Card sx={{ boxShadow: 3 }}>
       <CardContent>
@@ -24,16 +24,10 @@ const DatePicker: FC<AnswerProps> = ({ question, update, index, answers }) => {
           <Typography variant="h4">{question.question}</Typography>
         </Box>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
+          {/*  @ts-ignore */}
           <DesktopDatePicker
             inputFormat="dd.MM.yyyy"
             value={answers[0] ? new Date(answers[0]) : new Date()}
-            onChange={(e) => {
-              update(index, {
-                question: question.question,
-                questionId: question.id,
-                answers: [new Date(e)],
-              });
-            }}
             renderInput={(params) => <TextField {...params} />}
           />
         </LocalizationProvider>
@@ -42,4 +36,4 @@ const DatePicker: FC<AnswerProps> = ({ question, update, index, answers }) => {
   );
 };
 
-export default DatePicker;
+export default DatePickerAnswer;

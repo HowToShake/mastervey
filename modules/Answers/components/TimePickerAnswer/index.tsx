@@ -4,12 +4,15 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { DesktopDatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
 import { TextField } from "@mui/material";
-import { AnswerProps } from "@pages/dashboard/[id]/preview";
+import plLocale from "date-fns/locale/pl";
+import { useAppDispatch, useAppSelector } from "@hooks/redux";
+import { updateAnswer } from "@slices/createSurvey";
 import { FC } from "react";
+import { AnswerProps } from "@pages/dashboard/[id]/preview";
 
-const DatePicker: FC<AnswerProps> = ({ question, update, index, answers }) => {
+const TimePickerAnswer: FC<Partial<AnswerProps>> = ({ question, answers }) => {
   return (
     <Card sx={{ boxShadow: 3 }}>
       <CardContent>
@@ -21,19 +24,13 @@ const DatePicker: FC<AnswerProps> = ({ question, update, index, answers }) => {
             mb: 2,
           }}
         >
-          <Typography variant="h4">{question.question}</Typography>
+          <Typography variant="h4">{question?.question}</Typography>
         </Box>
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <DesktopDatePicker
-            inputFormat="dd.MM.yyyy"
-            value={answers[0] ? new Date(answers[0]) : new Date()}
-            onChange={(e) => {
-              update(index, {
-                question: question.question,
-                questionId: question.id,
-                answers: [new Date(e)],
-              });
-            }}
+        <LocalizationProvider dateAdapter={AdapterDateFns} locale={plLocale}>
+          {/*  @ts-ignore */}
+          <TimePicker
+            inputFormat="HH:mm"
+            value={answers?.[0] || null}
             renderInput={(params) => <TextField {...params} />}
           />
         </LocalizationProvider>
@@ -42,4 +39,4 @@ const DatePicker: FC<AnswerProps> = ({ question, update, index, answers }) => {
   );
 };
 
-export default DatePicker;
+export default TimePickerAnswer;

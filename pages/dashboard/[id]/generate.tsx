@@ -52,6 +52,8 @@ const Generate = () => {
     name: "create",
   });
 
+  console.log("fields", fields);
+
   useEffect(() => {
     setValue("create", survey?.create);
   }, [survey]);

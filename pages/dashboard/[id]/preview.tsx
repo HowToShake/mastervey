@@ -49,6 +49,7 @@ interface Answer {
   id: string;
   answers: string[];
   questionId: string;
+  question: string;
 }
 
 export interface Survey {
@@ -242,7 +243,6 @@ const PreviewSurvey = ({ survey }: { survey: Survey }) => {
         color="success"
         variant="outlined"
         startIcon={<SaveIcon />}
-        // onClick={save}
         type="submit"
         form="resolve-survey"
       >

@@ -6,7 +6,7 @@ import Card from "@mui/material/Card";
 import { FC } from "react";
 import { AnswerProps } from "@pages/dashboard/[id]/preview";
 
-const LongText: FC<AnswerProps> = ({ question, index, update, answers }) => {
+const LongTextAnswer: FC<Partial<AnswerProps>> = ({ question, answers }) => {
   return (
     <Card sx={{ boxShadow: 3 }}>
       <CardContent>
@@ -21,21 +21,13 @@ const LongText: FC<AnswerProps> = ({ question, index, update, answers }) => {
           <Typography variant="h4">{question.question}</Typography>
         </Box>
         <TextareaAutosize
-          // required={question.required}
           placeholder="Long text"
           style={{ width: 600, maxWidth: 900 }}
           value={(answers?.[0] as string) || ""}
-          onChange={(e) => {
-            update(index, {
-              question: question.question,
-              questionId: question.id,
-              answers: [e.target.value],
-            });
-          }}
         />
       </CardContent>
     </Card>
   );
 };
 
-export default LongText;
+export default LongTextAnswer;

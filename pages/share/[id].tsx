@@ -13,8 +13,6 @@ import Time from "../../modules/PreviewSurvey/components/Time";
 import SaveIcon from "@mui/icons-material/Save";
 import * as React from "react";
 import { dehydrate, QueryClient, useMutation } from "react-query";
-import Navbar from "@components/Navbar";
-import NavSurvey from "@components/NavSurvey";
 import { Survey } from "@pages/dashboard/[id]/preview";
 import { useAuth } from "@hooks/useAuth";
 import { useGeolocated } from "react-geolocated";

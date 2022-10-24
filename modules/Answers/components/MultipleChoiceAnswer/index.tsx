@@ -3,21 +3,14 @@ import CardContent from "@mui/material/CardContent";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import FormControl from "@mui/material/FormControl";
-import RadioGroup from "@mui/material/RadioGroup";
-import { FormControlLabel } from "@mui/material";
-import Radio from "@mui/material/Radio";
-import { ChangeEvent, FC } from "react";
+import { Checkbox, FormControlLabel, FormGroup } from "@mui/material";
+import { FC } from "react";
 import { AnswerProps } from "@pages/dashboard/[id]/preview";
 
-const SingleChoice: FC<AnswerProps> = ({ question, index, update }) => {
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    update(index, {
-      question: question.question,
-      questionId: question.id,
-      answers: [e.target.value],
-    });
-  };
-
+const MultipleChoiceAnswer: FC<Partial<AnswerProps>> = ({
+  question,
+  answers,
+}) => {
   return (
     <Card sx={{ boxShadow: 3 }}>
       <CardContent>
@@ -31,26 +24,29 @@ const SingleChoice: FC<AnswerProps> = ({ question, index, update }) => {
         >
           <Typography variant="h4">{question?.question}</Typography>
         </Box>
-        <FormControl>
-          <RadioGroup
-            aria-labelledby="demo-radio-buttons-group-label"
-            defaultValue="female"
-            name="radio-buttons-group"
-          >
+        <FormControl sx={{ m: 3 }} component="fieldset" variant="standard">
+          <FormGroup>
             {question?.options?.map((option) => {
               return (
                 <FormControlLabel
-                  control={<Radio value={option.text} onChange={onChange} />}
+                  key={option.text}
+                  control={
+                    <Checkbox
+                      checked={answers?.some(
+                        (answer) => answer === option.text
+                      )}
+                      name={option.text}
+                    />
+                  }
                   label={option.text}
-                  onChange={onChange}
                 />
               );
             })}
-          </RadioGroup>
+          </FormGroup>
         </FormControl>
       </CardContent>
     </Card>
   );
 };
 
-export default SingleChoice;
+export default MultipleChoiceAnswer;
