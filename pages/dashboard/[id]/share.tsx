@@ -14,6 +14,7 @@ import { Survey } from "@pages/dashboard/[id]/preview";
 const Share = ({ survey }: { survey: Survey }) => {
   const router = useRouter();
   const [copySuccess, setCopySuccess] = useState("");
+  const textAreaRefLink = useRef(null);
   const textAreaRef = useRef(null);
 
   const copyURL =
@@ -29,10 +30,45 @@ const Share = ({ survey }: { survey: Survey }) => {
     e.target.focus();
     setCopySuccess("Copied!");
   }
+
+  function copyLinkToClipboard(e) {
+    textAreaRefLink?.current?.select();
+    document.execCommand("copy");
+    // This is just personal preference.
+    // I prefer to not show the whole text area selected.
+    e.target.focus();
+    setCopySuccess("Copied!");
+  }
   return (
     <>
-      <Typography textAlign="center" variant="h2">
+      <Typography textAlign="center" variant="h2" mb={3}>
         <b>Share</b>
+      </Typography>
+      <Typography textAlign="center" variant="h4">
+        <b>Share via link</b>
+      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "center",
+          mb: 4,
+        }}
+      >
+        <form>
+          <textarea
+            ref={textAreaRefLink}
+            value={copyURL}
+            style={{ width: 800 }}
+          />
+        </form>
+        <IconButton onClick={copyLinkToClipboard}>
+          <ContentCopyIcon />
+        </IconButton>
+      </Box>
+      <Typography textAlign="center" variant="h4">
+        <b>Share via iframe</b>
       </Typography>
       <Box
         sx={{

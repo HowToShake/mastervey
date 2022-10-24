@@ -16,7 +16,7 @@ import { format } from "date-fns";
 import IconButton from "@mui/material/IconButton";
 import InfoTwoToneIcon from "@mui/icons-material/InfoTwoTone";
 import Grid from "@mui/material/Grid";
-import { Paper } from "@mui/material";
+import { Divider, Paper } from "@mui/material";
 import Typography from "@mui/material/Typography";
 
 const columns: GridColDef[] = [
@@ -80,7 +80,7 @@ const Index = () => {
   console.log("answers", answers);
 
   return (
-    <Container maxWidth="xl" sx={{ mt: 2, mb: 2 }}>
+    <Container maxWidth="xl" sx={{ mt: 2, mb: 8, minHeight: "100vh" }}>
       {answers?.answers && (
         <DataGrid
           autoHeight
@@ -94,16 +94,29 @@ const Index = () => {
           components={{ Toolbar: GridToolbar }}
         />
       )}
+      <Divider sx={{ my: 5 }}>
+        <Typography variant="h4">Most common answers</Typography>
+      </Divider>
       <Grid container spacing={2} mt={4}>
-        {/*{Object.values(answers?.total)?.map(*/}
-        {/*  (answer: { question: string; answers: string[] }) => (*/}
-        {/*    <Grid item xs={12} md={4} sx={{ textAlign: "center" }}>*/}
-        {/*      <Paper>*/}
-        {/*        <Typography>{answer.question}</Typography>*/}
-        {/*      </Paper>*/}
-        {/*    </Grid>*/}
-        {/*  )*/}
-        {/*)}*/}
+        {answers?.total && (
+          <>
+            {Object.values(answers?.total)?.map(
+              (answer: { question: string; answers: string[] }) => {
+                const mostCommonAnswer = Object.keys(answer.answers).reduce(
+                  (a, b) => (answers[a] > answers[b] ? a : b)
+                );
+                return (
+                  <Grid item xs={12} md={4} sx={{ textAlign: "center" }}>
+                    <Paper sx={{ p: 2, minHeight: 100 }}>
+                      <Typography variant="h6">{answer.question}</Typography>
+                      <Typography noWrap>{mostCommonAnswer}</Typography>
+                    </Paper>
+                  </Grid>
+                );
+              }
+            )}
+          </>
+        )}
       </Grid>
     </Container>
   );
