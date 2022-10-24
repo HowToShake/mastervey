@@ -17,7 +17,15 @@ export const createSurvey = functions.https.onRequest((req, res) => {
 
       const salt = await bcrypt.genSalt();
 
-      const hashedShareLink = await bcrypt.hash(name, salt);
+      let hashedShareLink = await bcrypt.hash(name, salt);
+
+      if (hashedShareLink.includes("/")) {
+        while (hashedShareLink.includes("/")) {
+          const salt = await bcrypt.genSalt();
+
+          hashedShareLink = await bcrypt.hash(name, salt);
+        }
+      }
 
       const newSurvey = {
         createdBy: uid,
