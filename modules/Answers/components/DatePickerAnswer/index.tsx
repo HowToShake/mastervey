@@ -26,8 +26,9 @@ const DatePickerAnswer: FC<Partial<AnswerProps>> = ({ question, answers }) => {
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           {/*  @ts-ignore */}
           <DesktopDatePicker
+            readOnly
             inputFormat="dd.MM.yyyy"
-            value={answers[0] ? new Date(answers[0]) : new Date()}
+            value={answers?.[0] ? new Date(answers?.[0]) : null}
             renderInput={(params) => <TextField {...params} />}
           />
         </LocalizationProvider>

@@ -29,6 +29,7 @@ const TimePickerAnswer: FC<Partial<AnswerProps>> = ({ question, answers }) => {
         <LocalizationProvider dateAdapter={AdapterDateFns} locale={plLocale}>
           {/*  @ts-ignore */}
           <TimePicker
+            readOnly
             inputFormat="HH:mm"
             value={answers?.[0] || null}
             renderInput={(params) => <TextField {...params} />}

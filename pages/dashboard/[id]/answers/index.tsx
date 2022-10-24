@@ -21,6 +21,12 @@ import Typography from "@mui/material/Typography";
 
 const columns: GridColDef[] = [
   {
+    headerName: "ID",
+    field: "ID",
+    flex: 1,
+    valueGetter: (params: GridValueGetterParams) => params.row.id,
+  },
+  {
     headerName: "User",
     field: "resolvedBy.email",
     flex: 1,

@@ -29,9 +29,10 @@ const ScaleAnswer: FC<Partial<AnswerProps>> = ({ question, answers }) => {
             <Typography mr={2}>{question?.options?.[0]?.text}</Typography>
           )}
           <Rating
+            readOnly
             name="highlight-selected-only"
             // @ts-ignore
-            defaultValue={answers?.answers?.[0]?.value}
+            defaultValue={answers?.[0]}
             max={10}
             icon={<CircleIcon fontSize="inherit" />}
             emptyIcon={<CircleOutlinedIcon fontSize="inherit" />}
