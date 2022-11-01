@@ -16,6 +16,13 @@ import Typography from "@mui/material/Typography";
 import CardContent from "@mui/material/CardContent";
 import { useMutation } from "react-query";
 import axios from "axios";
+import { object, string } from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+
+const schemaValidation = object().shape({
+  email: string().email().required("Login is required"),
+  password: string().required("Password is required"),
+});
 
 const Signup = () => {
   const router = useRouter();
@@ -25,7 +32,9 @@ const Signup = () => {
     handleSubmit,
     formState: { errors },
     setError,
-  } = useForm();
+  } = useForm({
+    resolver: yupResolver(schemaValidation),
+  });
 
   const { mutateAsync: signup, isLoading } = useMutation(
     "signup",
@@ -61,7 +70,7 @@ const Signup = () => {
         }}
         maxWidth="md"
       >
-        <Card sx={{ width: 500 }}>
+        <Card sx={{ width: 500 }} variant="outlined">
           <CardHeader
             title="Signup"
             titleTypographyProps={{ variant: "h2", textAlign: "center", mb: 2 }}
@@ -75,7 +84,7 @@ const Signup = () => {
               <TextField
                 label="Email"
                 fullWidth
-                {...register("email")}
+                {...register("email", { required: true })}
                 variant="outlined"
                 sx={{ mt: 2 }}
               />
@@ -123,8 +132,11 @@ Signup.getLayout = function getLayout(page: ReactElement) {
         display="flex"
         justifyContent="center"
         alignItems="center"
-        minHeight="90vh"
         maxWidth="100vw"
+        sx={{
+          backgroundImage: "linear-gradient(to right, #076585, #fff)",
+          minHeight: "calc(100vh - 64px)",
+        }}
       >
         {page}
       </Box>

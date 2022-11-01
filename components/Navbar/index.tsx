@@ -1,10 +1,9 @@
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
-import Link from "next/link";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "@hooks/useAuth";
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -13,24 +12,32 @@ const Navbar = () => {
       <AppBar position="static">
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            <Link href="/">Mastervey</Link>
+            <Button color="inherit" type="link" href="/">
+              Mastervey
+            </Button>
           </Typography>
           {user ? (
             <>
-              <Button color="inherit" sx={{ mr: 3 }}>
-                <Link href="/dashboard">Dashboard</Link>
+              <Button
+                color="inherit"
+                sx={{ mr: 3 }}
+                href="/dashboard"
+                type="link"
+              >
+                Dashboard
               </Button>
-              <Button color="inherit" onClick={logout}>
-                <Link href="/">Logout</Link>
+              <Button sx={{ mr: 3 }} color="inherit" onClick={logout}>
+                Logout
               </Button>
             </>
           ) : (
             <>
-              <Button color="inherit" sx={{ mr: 3 }}>
-                <Link href="/signup">Signup</Link>
+              <Button color="inherit" sx={{ mr: 3 }} href="/signup" type="link">
+                Signup
               </Button>
-              <Button color="inherit">
-                <Link href="/login">Login</Link>
+
+              <Button color="inherit" sx={{ mr: 3 }} href="/login" type="link">
+                Login
               </Button>
             </>
           )}

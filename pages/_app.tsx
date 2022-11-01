@@ -9,6 +9,7 @@ import { AuthGuard } from "@HOC/AuthGuard";
 import { ThemeProvider } from "@mui/system";
 import theme from "../styles";
 import nookies from "nookies";
+import Head from "next/head";
 
 export type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -39,6 +40,14 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
       <ThemeProvider theme={theme}>
         <QueryClientProvider client={queryClient}>
           <Hydrate state={pageProps.dehydratedState}>
+            <Head>
+              <title>Mastersurvey - your survey manager.</title>
+              <meta
+                name="description"
+                content="Create, manage and share your own survey!"
+              />
+              <link rel="icon" href="/favicon.ico" />
+            </Head>
             <CssBaseline />
             {Component.requireAuth ? (
               <AuthGuard>{getLayout(<Component {...pageProps} />)}</AuthGuard>
