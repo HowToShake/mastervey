@@ -8,7 +8,7 @@ import {
   getSurveys,
   getHashedSurvey,
 } from "./surveys";
-import { getAnswers, saveAnswer } from "./answers";
+import { getAnswers, getCSVAnswers, saveAnswer } from "./answers";
 
 export const cors = require("cors")({ origin: true });
 
@@ -28,4 +28,5 @@ export {
   getSurveys,
   getAnswers,
   saveAnswer,
+  getCSVAnswers,
 };

@@ -17,6 +17,7 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import Grid from "@mui/material/Grid";
 import LoadingButton from "@mui/lab/LoadingButton";
 import SaveIcon from "@mui/icons-material/Save";
+import SurveyBreadcrumbs from "@components/SurveyBreadcrumbs";
 
 const validationSchema = yup.object().shape({
   isPublic: yup.boolean(),
@@ -59,54 +60,57 @@ const Generate = () => {
   }, [survey]);
 
   return (
-    <Container
-      maxWidth="lg"
-      sx={{ display: "flex", flexDirection: "column", mb: 5 }}
-    >
-      {/*@ts-ignore*/}
-      <form id="generate-survey" onSubmit={handleSubmit(mutateAsync)}>
-        <Grid container spacing={2}>
-          {fields?.map((field: Question, index: number) => {
-            return (
-              <Grid item xs={12}>
-                <CreateQuestionCardNew
-                  remove={remove}
-                  control={control}
-                  update={update}
-                  index={index}
-                  question={field}
-                />
-              </Grid>
-            );
-          })}
-        </Grid>
-      </form>
-      <Button
-        sx={{ mt: 5, mb: 2 }}
-        variant="outlined"
-        fullWidth
-        startIcon={<AddCircleOutlineIcon />}
-        onClick={() =>
-          append({
-            question: "",
-            options: [],
-            type: QuestionTypes.SINGLECHOICE,
-          })
-        }
+    <>
+      <SurveyBreadcrumbs path={id} subPath="answers" sx={{ my: 2, ml: 3 }} />
+      <Container
+        maxWidth="lg"
+        sx={{ display: "flex", flexDirection: "column", mb: 5 }}
       >
-        Add question
-      </Button>
-      <LoadingButton
-        variant="outlined"
-        fullWidth
-        startIcon={<SaveIcon />}
-        loading={isLoading}
-        type="submit"
-        form="generate-survey"
-      >
-        Save
-      </LoadingButton>
-    </Container>
+        {/*@ts-ignore*/}
+        <form id="generate-survey" onSubmit={handleSubmit(mutateAsync)}>
+          <Grid container spacing={2}>
+            {fields?.map((field: Question, index: number) => {
+              return (
+                <Grid item xs={12}>
+                  <CreateQuestionCardNew
+                    remove={remove}
+                    control={control}
+                    update={update}
+                    index={index}
+                    question={field}
+                  />
+                </Grid>
+              );
+            })}
+          </Grid>
+        </form>
+        <Button
+          sx={{ mt: 5, mb: 2 }}
+          variant="outlined"
+          fullWidth
+          startIcon={<AddCircleOutlineIcon />}
+          onClick={() =>
+            append({
+              question: "",
+              options: [],
+              type: QuestionTypes.SINGLECHOICE,
+            })
+          }
+        >
+          Add question
+        </Button>
+        <LoadingButton
+          variant="outlined"
+          fullWidth
+          startIcon={<SaveIcon />}
+          loading={isLoading}
+          type="submit"
+          form="generate-survey"
+        >
+          Save
+        </LoadingButton>
+      </Container>
+    </>
   );
 };
 

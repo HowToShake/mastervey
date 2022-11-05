@@ -3,6 +3,8 @@ import * as admin from "firebase-admin";
 import { cors } from "./index";
 import { nanoid } from "nanoid";
 import { flattenDeep } from "lodash";
+const { parse } = require("json2csv");
+import { format } from "date-fns";
 
 export const saveAnswer = functions.https.onRequest((req, res) => {
   cors(req, res, async () => {
@@ -122,40 +124,70 @@ export const getAnswers = functions.https.onRequest((req, res) => {
   });
 });
 
-// export const getAnswer = functions.https.onRequest((req, res) => {
-//   cors(req, res, async () => {
-//     const { question, answerId } = req.query;
-//
-//     const tokenId = req.get("Authorization")?.split("Bearer ")[1];
-//
-//     if (!tokenId || typeof tokenId === "undefined") {
-//       res.status(403).send("Unauthorized");
-//     }
-//
-//     const { uid } = await admin.auth().verifyIdToken(tokenId as string);
-//
-//     if (!uid) {
-//       return res.status(403).send("Unauthorized");
-//     }
-//
-//     const surveysRef = admin.firestore().collection("surveys");
-//     const snapshot = await surveysRef.where("name", "==", question).get();
-//
-//     if (snapshot.empty) {
-//       console.log("No matching documents.");
-//       return res.status(200).send([]);
-//     }
-//
-//     const data = snapshot.docs.map((doc) => doc.data());
-//
-//     console.log("data", data);
-//
-//     const answer = data?.[0]?.answers?.find(
-//       (answer: { id: string }) => answer.id === answerId
-//     );
-//
-//     console.log("answer", answer);
-//
-//     return res.status(200).send(answer);
-//   });
-// });
+export const getCSVAnswers = functions.https.onRequest((req, res) => {
+  cors(req, res, async () => {
+    const { question } = req.query;
+
+    const tokenId = req.get("Authorization")?.split("Bearer ")[1];
+
+    if (!tokenId || typeof tokenId === "undefined") {
+      res.status(403).send("Unauthorized");
+    }
+
+    const { uid } = await admin.auth().verifyIdToken(tokenId as string);
+
+    if (!uid) {
+      return res.status(403).send("Unauthorized");
+    }
+
+    const surveysRef = admin.firestore().collection("surveys");
+    const snapshot = await surveysRef.where("name", "==", question).get();
+
+    if (snapshot.empty) {
+      console.log("No matching documents.");
+      return res.status(200).send([]);
+    }
+
+    const data = snapshot.docs.map((doc) => doc.data());
+
+    const newResult: never[] = [];
+
+    const answers = data?.[0]?.answers?.map(
+      // @ts-ignore
+      ({ id, resolvedBy, userAnswers, resolvedAt }, index) => {
+        // @ts-ignore
+        newResult?.[index] = {
+          id,
+          resolvedBy: resolvedBy?.email || "Anonymous",
+          resolvedAt: format(new Date(resolvedAt), "dd/MM/yyyy HH:mm"),
+        };
+
+        // @ts-ignore
+        const answers = userAnswers?.map(({ question, answers }, i) => {
+          // @ts-ignore
+          newResult?.[index] = {
+            // @ts-ignore
+            ...newResult?.[index],
+            [`question_${i}`]: question || "NULL",
+            [`answers_${i}`]: answers?.length === 0 ? "NULL" : answers,
+          };
+
+          return [question, ...answers];
+        });
+
+        return [id, resolvedBy?.email || "Anonymous", ...answers];
+      }
+    );
+
+    console.log("newResult", newResult);
+    console.log("answers", answers);
+    //headers: ["id", "resolved by", "question", "answers"]
+    const options = {};
+
+    const csv = parse(newResult, options);
+
+    return res.status(200).send({
+      csv,
+    });
+  });
+});

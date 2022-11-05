@@ -10,12 +10,16 @@ import * as React from "react";
 import { dehydrate, QueryClient } from "react-query";
 import axios from "axios";
 import { Survey } from "@pages/dashboard/[id]/preview";
+import SurveyBreadcrumbs from "@components/SurveyBreadcrumbs";
 
 const Share = ({ survey }: { survey: Survey }) => {
   const router = useRouter();
   const [copySuccess, setCopySuccess] = useState("");
   const textAreaRefLink = useRef(null);
   const textAreaRef = useRef(null);
+  const {
+    query: { id },
+  } = router;
 
   const copyURL =
     window?.location?.href?.replace(router?.asPath, "") +
@@ -41,6 +45,7 @@ const Share = ({ survey }: { survey: Survey }) => {
   }
   return (
     <>
+      <SurveyBreadcrumbs path={id} subPath="share" sx={{ my: 2, ml: 3 }} />
       <Typography textAlign="center" variant="h2" mb={3}>
         <b>Share</b>
       </Typography>

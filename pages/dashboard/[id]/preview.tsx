@@ -26,6 +26,7 @@ import {
 import Grid from "@mui/material/Grid";
 import { useAuth } from "@hooks/useAuth";
 import { useGeolocated } from "react-geolocated";
+import SurveyBreadcrumbs from "@components/SurveyBreadcrumbs";
 
 const validationSchema = yup.object().shape({
   answers: yup
@@ -133,122 +134,126 @@ const PreviewSurvey = ({ survey }: { survey: Survey }) => {
   };
 
   return (
-    <Container
-      maxWidth="lg"
-      sx={{ display: "flex", flexDirection: "column", mb: 5 }}
-    >
-      <Typography textAlign="center" variant="h3" mb={3}>
-        <b>Preview</b>
-      </Typography>
-      <form
-        id="resolve-survey"
-        onSubmit={handleSubmit(async (data) => await save())}
-      >
-        <Grid container spacing={2}>
-          {survey?.create?.map((question, index) => {
-            switch (question.type) {
-              case QuestionTypes.SINGLECHOICE: {
-                return (
-                  <Grid item xs={12}>
-                    <SingleChoice
-                      question={question}
-                      index={index}
-                      update={update}
-                    />
-                  </Grid>
-                );
-              }
-              case QuestionTypes.MULTIPLECHOICE: {
-                return (
-                  <Grid item xs={12}>
-                    <MultipleChoice
-                      question={question}
-                      index={index}
-                      update={update}
-                      answers={fields?.[index]?.answers}
-                    />
-                  </Grid>
-                );
-              }
-              case QuestionTypes.SHORTTEXT: {
-                return (
-                  <Grid item xs={12}>
-                    <ShortText
-                      question={question}
-                      index={index}
-                      update={update}
-                      answers={fields?.[index]?.answers}
-                    />
-                  </Grid>
-                );
-              }
-              case QuestionTypes.LONGTEXT: {
-                return (
-                  <Grid item xs={12}>
-                    <LongText
-                      question={question}
-                      index={index}
-                      update={update}
-                      answers={fields?.[index]?.answers}
-                    />
-                  </Grid>
-                );
-              }
-              case QuestionTypes.SCALE: {
-                return (
-                  <Grid item xs={12}>
-                    <Scale
-                      question={question}
-                      index={index}
-                      update={update}
-                      answers={fields?.[index]?.answers}
-                    />
-                  </Grid>
-                );
-              }
-              case QuestionTypes.DATE: {
-                return (
-                  <Grid item xs={12}>
-                    <DatePicker
-                      question={question}
-                      index={index}
-                      update={update}
-                      answers={fields?.[index]?.answers}
-                    />
-                  </Grid>
-                );
-              }
-              case QuestionTypes.TIME: {
-                return (
-                  <Grid item xs={12}>
-                    <Time
-                      question={question}
-                      index={index}
-                      update={update}
-                      answers={fields?.[index]?.answers}
-                    />
-                  </Grid>
-                );
-              }
-              default:
-                return null;
-            }
-          })}
-        </Grid>
-      </form>
+    <>
+      <SurveyBreadcrumbs path={id} subPath="preview" sx={{ my: 2, ml: 3 }} />
 
-      <LoadingButton
-        loading={isSaving}
-        sx={{ width: "100%", mt: 3 }}
-        color="success"
-        variant="outlined"
-        startIcon={<SaveIcon />}
-        type="submit"
-        form="resolve-survey"
+      <Container
+        maxWidth="lg"
+        sx={{ display: "flex", flexDirection: "column", mb: 5 }}
       >
-        Save
-      </LoadingButton>
-    </Container>
+        <Typography textAlign="center" variant="h3" mb={3}>
+          <b>Preview</b>
+        </Typography>
+        <form
+          id="resolve-survey"
+          onSubmit={handleSubmit(async (data) => await save())}
+        >
+          <Grid container spacing={2}>
+            {survey?.create?.map((question, index) => {
+              switch (question.type) {
+                case QuestionTypes.SINGLECHOICE: {
+                  return (
+                    <Grid item xs={12}>
+                      <SingleChoice
+                        question={question}
+                        index={index}
+                        update={update}
+                      />
+                    </Grid>
+                  );
+                }
+                case QuestionTypes.MULTIPLECHOICE: {
+                  return (
+                    <Grid item xs={12}>
+                      <MultipleChoice
+                        question={question}
+                        index={index}
+                        update={update}
+                        answers={fields?.[index]?.answers}
+                      />
+                    </Grid>
+                  );
+                }
+                case QuestionTypes.SHORTTEXT: {
+                  return (
+                    <Grid item xs={12}>
+                      <ShortText
+                        question={question}
+                        index={index}
+                        update={update}
+                        answers={fields?.[index]?.answers}
+                      />
+                    </Grid>
+                  );
+                }
+                case QuestionTypes.LONGTEXT: {
+                  return (
+                    <Grid item xs={12}>
+                      <LongText
+                        question={question}
+                        index={index}
+                        update={update}
+                        answers={fields?.[index]?.answers}
+                      />
+                    </Grid>
+                  );
+                }
+                case QuestionTypes.SCALE: {
+                  return (
+                    <Grid item xs={12}>
+                      <Scale
+                        question={question}
+                        index={index}
+                        update={update}
+                        answers={fields?.[index]?.answers}
+                      />
+                    </Grid>
+                  );
+                }
+                case QuestionTypes.DATE: {
+                  return (
+                    <Grid item xs={12}>
+                      <DatePicker
+                        question={question}
+                        index={index}
+                        update={update}
+                        answers={fields?.[index]?.answers}
+                      />
+                    </Grid>
+                  );
+                }
+                case QuestionTypes.TIME: {
+                  return (
+                    <Grid item xs={12}>
+                      <Time
+                        question={question}
+                        index={index}
+                        update={update}
+                        answers={fields?.[index]?.answers}
+                      />
+                    </Grid>
+                  );
+                }
+                default:
+                  return null;
+              }
+            })}
+          </Grid>
+        </form>
+
+        <LoadingButton
+          loading={isSaving}
+          sx={{ width: "100%", mt: 3 }}
+          color="success"
+          variant="outlined"
+          startIcon={<SaveIcon />}
+          type="submit"
+          form="resolve-survey"
+        >
+          Save
+        </LoadingButton>
+      </Container>
+    </>
   );
 };
 

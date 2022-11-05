@@ -3,7 +3,7 @@ import Container from "@mui/material/Container";
 import { ReactElement, useState } from "react";
 import Navbar from "@components/Navbar";
 import NavSurvey from "@components/NavSurvey";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import axios from "axios";
 import {
   DataGrid,
@@ -17,6 +17,9 @@ import InfoTwoToneIcon from "@mui/icons-material/InfoTwoTone";
 import Grid from "@mui/material/Grid";
 import { Divider, Paper } from "@mui/material";
 import Typography from "@mui/material/Typography";
+import SurveyBreadcrumbs from "@components/SurveyBreadcrumbs";
+import LoadingButton from "@mui/lab/LoadingButton";
+import DownloadIcon from "@mui/icons-material/Download";
 
 const columns: GridColDef[] = [
   {
@@ -76,10 +79,57 @@ const Index = () => {
     return data;
   });
 
-  console.log("answers", answers);
+  const { mutateAsync, isLoading } = useMutation(
+    "getCSVAnswers",
+    async () => {
+      const { data } = await axios.get("getCSVAnswers", {
+        params: {
+          question: id,
+        },
+      });
+      return data;
+    },
+    {
+      onSuccess: (data) => {
+        const contentType = "text/csv";
+        const csvFile = new Blob([data.csv], { type: contentType });
+
+        const href = URL.createObjectURL(csvFile);
+
+        // create "a" HTML element with href to file & click
+        const link = document.createElement("a");
+        link.href = href;
+        link.setAttribute("download", "answers.csv"); //or any other extension
+        document.body.appendChild(link);
+        link.click();
+
+        // clean up "a" element & remove ObjectURL
+        document.body.removeChild(link);
+        URL.revokeObjectURL(href);
+      },
+    }
+  );
 
   return (
     <Container maxWidth="xl" sx={{ mt: 2, mb: 8, minHeight: "100vh" }}>
+      <SurveyBreadcrumbs path={id} subPath="answers" sx={{ my: 2 }} />
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "flex-end",
+        }}
+      >
+        <LoadingButton
+          onClick={async () => await mutateAsync()}
+          loading={isLoading}
+          variant="outlined"
+          sx={{ my: 1 }}
+          startIcon={<DownloadIcon />}
+        >
+          Get Answers in CSV Format
+        </LoadingButton>
+      </div>
       {answers?.answers && (
         <DataGrid
           autoHeight
