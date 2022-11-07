@@ -154,12 +154,14 @@ export const getCSVAnswers = functions.https.onRequest((req, res) => {
 
     const answers = data?.[0]?.answers?.map(
       // @ts-ignore
-      ({ id, resolvedBy, userAnswers, resolvedAt }, index) => {
+      ({ id, resolvedBy, userAnswers, resolvedAt, resolvedInPlace }, index) => {
         // @ts-ignore
         newResult?.[index] = {
           id,
           resolvedBy: resolvedBy?.email || "Anonymous",
           resolvedAt: format(new Date(resolvedAt), "dd/MM/yyyy HH:mm"),
+          latitude: resolvedInPlace?.latitude || "NULL",
+          longitude: resolvedInPlace?.longitude || "NULL",
         };
 
         // @ts-ignore
@@ -168,8 +170,8 @@ export const getCSVAnswers = functions.https.onRequest((req, res) => {
           newResult?.[index] = {
             // @ts-ignore
             ...newResult?.[index],
-            [`question_${i}`]: question || "NULL",
-            [`answers_${i}`]: answers?.length === 0 ? "NULL" : answers,
+            [`question ${i + 1}`]: question || "NULL",
+            [`answer ${i + 1}`]: prepareAnswers(answers),
           };
 
           return [question, ...answers];
@@ -191,3 +193,11 @@ export const getCSVAnswers = functions.https.onRequest((req, res) => {
     });
   });
 });
+
+const prepareAnswers = (answers: string[]): string => {
+  if (answers?.length === 0) return "NULL";
+
+  if (answers?.length === 1) return answers?.[0];
+
+  return answers?.join("|");
+};
